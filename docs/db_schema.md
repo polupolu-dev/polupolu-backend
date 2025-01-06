@@ -40,6 +40,8 @@ https://www.notion.so/DB-657cf1990e354cb6b923be3189f9c611
 
 ## news
 
+`comment_ids` 必要なので追加．
+
 `id` が uuid と記載なのに例が uuid ではなかったので，uuid にした．
 これは，例にある`id`の`_`以降の生成方法がわからなかったからである．
 
@@ -146,7 +148,16 @@ https://www.notion.so/DB-657cf1990e354cb6b923be3189f9c611
         },
         "minimum": 0,
         "maximum": 1023,
-        "example": { "empathy": 5, "insight": 4, "mediocre": 1 }
+        "example": { "empathy": 5, "insight": 4, "mediocre": 1 },
+        "comment": "minimum, maximum わかんない"
+      },
+      "comment_ids": {
+        "description": "付けられたコメントIDの文字列配列",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 1023,
+        "example": ["f81e95ef-0320-4810-be74-39af2571312f"]
       }
     },
     "required": [
@@ -157,13 +168,16 @@ https://www.notion.so/DB-657cf1990e354cb6b923be3189f9c611
       "url",
       "summary",
       "published_at",
-      "feedback_scores"
+      "feedback_scores",
+      "comment_ids"
     ]
   }
 }
 ```
 
 ## comments
+
+`reply_id` を `replied_id` に改名．
 
 `user_id` が uuid なのに例が uuid ではなかった．例を元に形式を推測した．
 各文字の意味などもわからなかったので全てランダムな半角英数大文字だと推測した．
@@ -183,14 +197,16 @@ https://www.notion.so/DB-657cf1990e354cb6b923be3189f9c611
         "example": "f81e95ef-0320-4810-be74-39af2571312f",
         "comment": "UUIDで重複しない36文字の文字列（定数）"
       },
-      "reply_id": {
-        "description": "コメントを付ける記事やコメントのUUID",
+      "replied_id": {
+        "description": "返信として付けられたコメントIDの文字列配列",
         "primary": false,
         "type": "string",
-        "minimum": 36,
-        "maximum": 36,
-        "example": "3bc2b890-4d9a-4ce7-bbef-963444b70469",
-        "comment": "UUIDで重複しない36文字の文字列（定数）"
+        "minimum": 0,
+        "maximum": 1023,
+        "example": [
+          "dd209627-7b7b-412d-b787-793ccd737416",
+          "47c3faed-6596-4529-86d4-f1e296349153"
+        ]
       },
       "user_id": {
         "description": "ユーザーのID",
@@ -253,7 +269,8 @@ https://www.notion.so/DB-657cf1990e354cb6b923be3189f9c611
         },
         "minimum": 0,
         "maximum": 1023,
-        "example": { "empathy": 3, "insight": 4, "mediocre": 2 }
+        "example": { "empathy": 3, "insight": 4, "mediocre": 2 },
+        "comment": "minimum, maximum わかんない"
       }
     },
     "required": [
@@ -269,6 +286,8 @@ https://www.notion.so/DB-657cf1990e354cb6b923be3189f9c611
 ```
 
 ## user
+
+`comment_ids` を追加．
 
 `user_id` が uuid なのに例が uuid ではなかった．例を元に形式を推測した．
 各文字の意味などもわからなかったので全てランダムな半角英数大文字だと推測した．
@@ -287,6 +306,14 @@ https://www.notion.so/DB-657cf1990e354cb6b923be3189f9c611
         "maximum": 36,
         "example": "F-40-HOM-RCA-001",
         "comment": ".-..-...-...-... 形式，ハイフン以外は半角大文字英数のランダム"
+      },
+      "comment_ids": {
+        "description": "付けたコメントIDの文字列配列",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 1023,
+        "example": ["f81e95ef-0320-4810-be74-39af2571312f"]
       },
       "gender": {
         "description": "ユーザーの性別",
@@ -375,6 +402,37 @@ https://www.notion.so/DB-657cf1990e354cb6b923be3189f9c611
       "background_knowledge",
       "emotion"
     ]
+  }
+}
+```
+
+## category
+
+カテゴリーでニュースを取得するために追加．
+
+```json
+{
+  "news": {
+    "type": "object",
+    "properties": {
+      "category": {
+        "description": "ニュースのカテゴリー名",
+        "primary": true,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "政治"
+      },
+      "news_ids": {
+        "description": "カテゴライズされたニュースIDの文字列配列",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 1023,
+        "example": ["f9c4afa7-456f-4f0c-bce7-9a34b6489089"]
+      }
+    },
+    "required": ["category", "news_ids"]
   }
 }
 ```
