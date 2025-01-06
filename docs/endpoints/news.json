@@ -1,0 +1,60 @@
+{
+  "news": {
+    "getNewsDetail": {
+      "endpoint": "/api/v1/news/{news_id}",
+      "method": "GET",
+      "successStatus": 200,
+      "errorStatus": {
+        "404": "ニュースがない"
+      }
+    },
+    "createNews": {
+      "endpoint": "/api/v1/news",
+      "method": "POST",
+      "successStatus": {
+        "201": "作成成功（LocationヘッダでリソースURIを返す）"
+      },
+      "errorStatus": {
+        "409": "リソースが既にある"
+      }
+    },
+    "getCategoryNews": {
+      "endpoint": "/api/v1/news/categories/{category}",
+      "method": "GET",
+      "successStatus": {
+        "200": "成功（空の場合あり）"
+      },
+      "errorStatus": {
+        "404": "カテゴリがない"
+      }
+    },
+    "getAllNews": {
+      "endpoint": "/api/v1/news",
+      "method": "GET",
+      "successStatus": {
+        "200": "成功（空の場合あり）"
+      }
+    },
+    "deleteNews": {
+      "endpoint": "/api/v1/news/{news_id}",
+      "method": "DELETE",
+      "successStatus": 204,
+      "errorStatus": {
+        "404": "ニュースがない（削除済み）",
+        "409": "リソースがロック中"
+      }
+    },
+    "updateNews": {
+      "endpoint": "/api/v1/news/{news_id}",
+      "method": "PUT",
+      "successStatus": {
+        "204": "更新成功",
+        "201": "（新規で）作成成功"
+      },
+      "errorStatus": {
+        "404": "ニュースがない",
+        "409": "リソースが既にある，リソースがロック中"
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "users": {
+    "getUser": {
+      "endpoint": "/api/v1/users/{user_id}",
+      "method": "GET",
+      "successStatus": 200,
+      "errorStatus": {
+        "404": "ユーザーがいない"
+      }
+    },
+    "createUser": {
+      "endpoint": "/api/v1/users",
+      "method": "POST",
+      "successStatus": {
+        "201": "作成成功（LocationヘッダでリソースURIを返す）"
+      },
+      "errorStatus": {
+        "404": "ユーザーがいない",
+        "409": "リソースが既にある"
+      }
+    },
+    "deleteUser": {
+      "endpoint": "/api/v1/users/{user_id}",
+      "method": "DELETE",
+      "successStatus": 204,
+      "errorStatus": {
+        "404": "ユーザーがいない（削除済み）",
+        "409": "リソースがロック中"
+      }
+    },
+    "updateUser": {
+      "endpoint": "/api/v1/users/{user_id}",
+      "method": "PUT",
+      "successStatus": {
+        "204": "更新成功",
+        "201": "（新規で）作成成功"
+      },
+      "errorStatus": {
+        "404": "ユーザーがいない",
+        "409": "リソースが既にある，リソースがロック中"
+      }
+    }
+  }
+}
