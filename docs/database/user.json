@@ -1,0 +1,110 @@
+{
+  "user": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "ユーザーID（識別用，スラグとしても使う）",
+        "primary": true,
+        "type": "string",
+        "minimum": 36,
+        "maximum": 36,
+        "example": "F-40-HOM-RCA-001",
+        "comment": ".-..-...-...-... 形式，ハイフン以外は半角大文字英数のランダム"
+      },
+      "comment_ids": {
+        "description": "付けたコメントIDの文字列配列",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 1023,
+        "example": ["f81e95ef-0320-4810-be74-39af2571312f"]
+      },
+      "gender": {
+        "description": "ユーザーの性別",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "女性"
+      },
+      "age_group": {
+        "description": "ユーザーの年齢層",
+        "primary": false,
+        "type": "string",
+        "minimum": 2,
+        "maximum": 2,
+        "example": "20",
+        "comment": "代はフロントで付ける，00は10代未満，90は90代以上, １の位は0"
+      },
+      "occupation": {
+        "description": "ユーザーの職業",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "学生"
+      },
+      "political_view": {
+        "description": "ユーザーの政治的観点",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "中立"
+      },
+      "opinion_tone": {
+        "description": "意見のトーン",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "中立"
+      },
+      "speech_style": {
+        "description": "話し方",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "優しい口調"
+      },
+      "comment_length": {
+        "description": "生成予定のコメントの長さ",
+        "primary": false,
+        "type": "int",
+        "minimum": 1,
+        "maximum": 4,
+        "example": 80,
+        "comment": "2047文字が上限"
+      },
+      "background_knowledge": {
+        "description": "話題の背景知識",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "詳しくない"
+      },
+      "emotion": {
+        "description": "感情",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "驚き"
+      }
+    },
+    "required": [
+      "id",
+      "gender",
+      "age_group",
+      "occupation",
+      "political_view",
+      "opinion_tone",
+      "speech_style",
+      "comment_length",
+      "background_knowledge",
+      "emotion"
+    ]
+  }
+}

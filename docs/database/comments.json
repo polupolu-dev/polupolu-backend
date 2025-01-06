@@ -1,0 +1,99 @@
+{
+  "comments": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "コメントID（識別用）",
+        "primary": true,
+        "type": "string",
+        "minimum": 36,
+        "maximum": 36,
+        "example": "f81e95ef-0320-4810-be74-39af2571312f",
+        "comment": "UUIDで重複しない36文字の文字列（定数）"
+      },
+      "replied_id": {
+        "description": "返信として付けられたコメントIDの文字列配列",
+        "primary": false,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 1023,
+        "example": [
+          "dd209627-7b7b-412d-b787-793ccd737416",
+          "47c3faed-6596-4529-86d4-f1e296349153"
+        ]
+      },
+      "user_id": {
+        "description": "ユーザーのID",
+        "primary": false,
+        "type": "string",
+        "minimum": 16,
+        "maximum": 16,
+        "example": "F-40-HOM-RCA-001",
+        "comment": ".-..-...-...-... 形式，ハイフン以外は半角大文字英数のランダム"
+      },
+      "content": {
+        "description": "コメントそのもの",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 2047,
+        "example": "これは政治のニュースに対するコメントです．素晴らしい！"
+      },
+      "created_at": {
+        "description": "生成時刻",
+        "primary": false,
+        "type": "string",
+        "minimum": 19,
+        "maximum": 19,
+        "example": "2024-10-18 16:20:46",
+        "comment": "yyyy-MM-dd HH:mm:ss 形式"
+      },
+      "feedback_scores": {
+        "description": "コメントの共感・なるほど・いまいちスコア",
+        "primary": false,
+        "type": "object",
+        "properties": {
+          "empathy": {
+            "description": "共感スコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 3,
+            "comment": "32ビット符号なし整数の範囲内"
+          },
+          "insight": {
+            "description": "なるほどスコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 4,
+            "comment": "32ビット符号なし整数の範囲内"
+          },
+          "mediocre": {
+            "description": "いまいちスコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 2,
+            "comment": "32ビット符号なし整数の範囲内"
+          }
+        },
+        "minimum": 0,
+        "maximum": 1023,
+        "example": { "empathy": 3, "insight": 4, "mediocre": 2 },
+        "comment": "minimum, maximum わかんない"
+      }
+    },
+    "required": [
+      "id",
+      "reply_id",
+      "user_id",
+      "content",
+      "created_at",
+      "feedback_scores"
+    ]
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "news": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "ニュースID（識別用，スラグとしても使う）",
+        "primary": true,
+        "type": "string",
+        "minimum": 36,
+        "maximum": 36,
+        "example": "f9c4afa7-456f-4f0c-bce7-9a34b6489089",
+        "comment": "UUIDで重複しない36文字の文字列（定数）"
+      },
+      "category": {
+        "description": "ニュースのカテゴリー名",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "政治"
+      },
+      "title": {
+        "description": "  - ニュースのタイトル（引用元のページのタイトルと同じ）",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 255,
+        "example": "福岡未踏さんが驚きの研究を！？"
+      },
+      "source": {
+        "description": "引用元の名前",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 255,
+        "example": "Yahoo!ニュース - 日経新聞"
+      },
+      "url": {
+        "description": "URL",
+        "primary": false,
+        "type": "string",
+        "minimum": 8,
+        "maximum": 255,
+        "example": "https://example.com"
+      },
+      "summary": {
+        "description": "ニュースの要約",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 1023,
+        "example": "福岡未踏大学の福岡未踏さんは福岡未踏についての研究を行っている．この記事は福岡未踏さんの研究テーマである福岡未踏についての成果を述べている．"
+      },
+      "published_at": {
+        "description": "ニュース記事の公開日時",
+        "primary": false,
+        "type": "string",
+        "minimum": 10,
+        "maximum": 10,
+        "example": "2024-12-15"
+      },
+      "feedback_scores": {
+        "description": "共感・なるほど・いまいちスコア",
+        "primary": false,
+        "type": "object",
+        "properties": {
+          "empathy": {
+            "description": "共感スコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 5,
+            "comment": "32ビット符号なし整数の範囲内"
+          },
+          "insight": {
+            "description": "なるほどスコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 4,
+            "comment": "32ビット符号なし整数の範囲内"
+          },
+          "mediocre": {
+            "description": "いまいちスコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 1,
+            "comment": "32ビット符号なし整数の範囲内"
+          }
+        },
+        "minimum": 0,
+        "maximum": 1023,
+        "example": { "empathy": 5, "insight": 4, "mediocre": 1 },
+        "comment": "minimum, maximum わかんない"
+      },
+      "comment_ids": {
+        "description": "付けられたコメントIDの文字列配列",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 1023,
+        "example": ["f81e95ef-0320-4810-be74-39af2571312f"]
+      }
+    },
+    "required": [
+      "id",
+      "category",
+      "title",
+      "source",
+      "url",
+      "summary",
+      "published_at",
+      "feedback_scores",
+      "comment_ids"
+    ]
+  }
+}
