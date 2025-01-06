@@ -1,0 +1,512 @@
+# DB スキーマ
+
+https://www.notion.so/DB-657cf1990e354cb6b923be3189f9c611
+
+- 公開/非公開の情報は保持する必要がないかなと思い消してみた
+- 厳密な JSON スキーマではない
+- MVP なので全て必須（required）にした
+- 各キーについて（properties）は次
+
+```json
+{
+  "required": [
+    "description",
+    "primary",
+    "type",
+    "minimum",
+    "maximum",
+    "example"
+  ],
+  "description": "そのキーについての説明",
+  "primary": "プライマリーキーか，true/false",
+  "type": "型",
+  "minimum": "最小値",
+  "maximum": "最大値",
+  "example": "例",
+  "comment": "コメント，その他の情報"
+}
+```
+
+```json
+{
+  "description": "",
+  "primary": false,
+  "type": "string",
+  "minimum": 0,
+  "maximum": 1023,
+  "example": "",
+},
+```
+
+## news
+
+`id` が uuid と記載なのに例が uuid ではなかったので，uuid にした．
+これは，例にある`id`の`_`以降の生成方法がわからなかったからである．
+
+日本語は次のように訳した．
+
+- 共感: empathy
+- なるほど: insight
+- いまいち: mediocre
+
+```json
+{
+  "news": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "ニュースID（識別用，スラグとしても使う）",
+        "primary": true,
+        "type": "string",
+        "minimum": 36,
+        "maximum": 36,
+        "example": "f9c4afa7-456f-4f0c-bce7-9a34b6489089",
+        "comment": "UUIDで重複しない36文字の文字列（定数）"
+      },
+      "category": {
+        "description": "ニュースのカテゴリー名",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "政治"
+      },
+      "title": {
+        "description": "  - ニュースのタイトル（引用元のページのタイトルと同じ）",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 255,
+        "example": "福岡未踏さんが驚きの研究を！？"
+      },
+      "source": {
+        "description": "引用元の名前",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 255,
+        "example": "Yahoo!ニュース - 日経新聞"
+      },
+      "url": {
+        "description": "URL",
+        "primary": false,
+        "type": "string",
+        "minimum": 8,
+        "maximum": 255,
+        "example": "https://example.com"
+      },
+      "summary": {
+        "description": "ニュースの要約",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 1023,
+        "example": "福岡未踏大学の福岡未踏さんは福岡未踏についての研究を行っている．この記事は福岡未踏さんの研究テーマである福岡未踏についての成果を述べている．"
+      },
+      "published_at": {
+        "description": "ニュース記事の公開日時",
+        "primary": false,
+        "type": "string",
+        "minimum": 10,
+        "maximum": 10,
+        "example": "2024-12-15"
+      },
+      "feedback_scores": {
+        "description": "共感・なるほど・いまいちスコア",
+        "primary": false,
+        "type": "object",
+        "properties": {
+          "empathy": {
+            "description": "共感スコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 5,
+            "comment": "32ビット符号なし整数の範囲内"
+          },
+          "insight": {
+            "description": "なるほどスコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 4,
+            "comment": "32ビット符号なし整数の範囲内"
+          },
+          "mediocre": {
+            "description": "いまいちスコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 1,
+            "comment": "32ビット符号なし整数の範囲内"
+          }
+        },
+        "minimum": 0,
+        "maximum": 1023,
+        "example": { "empathy": 5, "insight": 4, "mediocre": 1 }
+      }
+    },
+    "required": [
+      "id",
+      "category",
+      "title",
+      "source",
+      "url",
+      "summary",
+      "published_at",
+      "feedback_scores"
+    ]
+  }
+}
+```
+
+## comments
+
+`user_id` が uuid なのに例が uuid ではなかった．例を元に形式を推測した．
+各文字の意味などもわからなかったので全てランダムな半角英数大文字だと推測した．
+衝突した場合は再度ランダムを考えているが，リソース枯渇とかは知らん．まあ大丈夫やろ．
+
+```json
+{
+  "comments": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "コメントID（識別用）",
+        "primary": true,
+        "type": "string",
+        "minimum": 36,
+        "maximum": 36,
+        "example": "f81e95ef-0320-4810-be74-39af2571312f",
+        "comment": "UUIDで重複しない36文字の文字列（定数）"
+      },
+      "reply_id": {
+        "description": "コメントを付ける記事やコメントのUUID",
+        "primary": false,
+        "type": "string",
+        "minimum": 36,
+        "maximum": 36,
+        "example": "3bc2b890-4d9a-4ce7-bbef-963444b70469",
+        "comment": "UUIDで重複しない36文字の文字列（定数）"
+      },
+      "user_id": {
+        "description": "ユーザーのID",
+        "primary": false,
+        "type": "string",
+        "minimum": 16,
+        "maximum": 16,
+        "example": "F-40-HOM-RCA-001",
+        "comment": ".-..-...-...-... 形式，ハイフン以外は半角大文字英数のランダム"
+      },
+      "content": {
+        "description": "コメントそのもの",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 2047,
+        "example": "これは政治のニュースに対するコメントです．素晴らしい！"
+      },
+      "created_at": {
+        "description": "生成時刻",
+        "primary": false,
+        "type": "string",
+        "minimum": 19,
+        "maximum": 19,
+        "example": "2024-10-18 16:20:46",
+        "comment": "yyyy-MM-dd HH:mm:ss 形式"
+      },
+      "feedback_scores": {
+        "description": "コメントの共感・なるほど・いまいちスコア",
+        "primary": false,
+        "type": "object",
+        "properties": {
+          "empathy": {
+            "description": "共感スコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 3,
+            "comment": "32ビット符号なし整数の範囲内"
+          },
+          "insight": {
+            "description": "なるほどスコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 4,
+            "comment": "32ビット符号なし整数の範囲内"
+          },
+          "mediocre": {
+            "description": "いまいちスコア",
+            "primary": false,
+            "type": "int",
+            "minimum": 0,
+            "maximum": 4294967295,
+            "example": 2,
+            "comment": "32ビット符号なし整数の範囲内"
+          }
+        },
+        "minimum": 0,
+        "maximum": 1023,
+        "example": { "empathy": 3, "insight": 4, "mediocre": 2 }
+      }
+    },
+    "required": [
+      "id",
+      "reply_id",
+      "user_id",
+      "content",
+      "created_at",
+      "feedback_scores"
+    ]
+  }
+}
+```
+
+## user
+
+`user_id` が uuid なのに例が uuid ではなかった．例を元に形式を推測した．
+各文字の意味などもわからなかったので全てランダムな半角英数大文字だと推測した．
+衝突した場合は再度ランダムを考えているが，リソース枯渇とかは知らん．まあ大丈夫やろ．
+
+```json
+{
+  "user": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "ユーザーID（識別用，スラグとしても使う）",
+        "primary": true,
+        "type": "string",
+        "minimum": 36,
+        "maximum": 36,
+        "example": "F-40-HOM-RCA-001",
+        "comment": ".-..-...-...-... 形式，ハイフン以外は半角大文字英数のランダム"
+      },
+      "gender": {
+        "description": "ユーザーの性別",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "女性"
+      },
+      "age_group": {
+        "description": "ユーザーの年齢層",
+        "primary": false,
+        "type": "string",
+        "minimum": 2,
+        "maximum": 2,
+        "example": "20",
+        "comment": "代はフロントで付ける，00は10代未満，90は90代以上, １の位は0"
+      },
+      "occupation": {
+        "description": "ユーザーの職業",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "学生"
+      },
+      "political_view": {
+        "description": "ユーザーの政治的観点",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "中立"
+      },
+      "opinion_tone": {
+        "description": "意見のトーン",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "中立"
+      },
+      "speech_style": {
+        "description": "話し方",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "優しい口調"
+      },
+      "comment_length": {
+        "description": "生成予定のコメントの長さ",
+        "primary": false,
+        "type": "int",
+        "minimum": 1,
+        "maximum": 4,
+        "example": 80,
+        "comment": "2047文字が上限"
+      },
+      "background_knowledge": {
+        "description": "話題の背景知識",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "詳しくない"
+      },
+      "emotion": {
+        "description": "感情",
+        "primary": false,
+        "type": "string",
+        "minimum": 1,
+        "maximum": 63,
+        "example": "驚き"
+      }
+    },
+    "required": [
+      "id",
+      "gender",
+      "age_group",
+      "occupation",
+      "political_view",
+      "opinion_tone",
+      "speech_style",
+      "comment_length",
+      "background_knowledge",
+      "emotion"
+    ]
+  }
+}
+```
+
+# 書き起こしのメモ
+
+- news
+  - id
+    - uuid
+    - プライマリ，識別用
+    - スラグ
+    - 公開
+    - string
+    - 例: **20250102_9y0**
+  - category
+    - ニュースのカテゴリー名
+    - 公開（**最初は非公開** (サイト上にカテゴリの欄を設けていないため)）
+    - string
+    - 例: 政治
+  - title
+    - ニュースのタイトル
+      - 引用元のページのタイトルと同じ
+    - 公開
+    - string
+    - 例: 福岡未踏さんが驚きの研究を！？
+  - source
+    - 引用元の名前
+    - 公開
+    - string
+    - 例: Yahoo!ニュース - 日経新聞
+  - url
+    - 引用元の URL
+    - 公開
+    - string
+    - 例: https://example.com
+  - summary
+    - ニュースの要約
+    - **非公開**
+    - string
+    - 例: 福岡未踏大学の福岡未踏さんは福岡未踏についての研究を行っている．この記事は福岡未踏さんの研究テーマである福岡未踏についての成果を述べている．
+  - published_at
+    - ニュース記事の公開日時
+    - 公開
+    - string
+    - 例: 2024-12-15
+  - feedback_scores
+    - 共感・なるほど・いまいちスコア
+    - 公開
+    - object
+    - 例: {"共感": 5, "なるほど": 4, "いまいち": 1}
+- comments
+  - id
+    - プライマリ，識別用
+    - 非公開？
+    - string
+    - 例: f81e95ef-0320-4810-be74-39af2571312f
+  - reply_id
+    - コメントを付ける記事・コメントの uuid
+    - 非公開？
+    - string
+    - 例: 3bc2b890-4d9a-4ce7-bbef-963444b70469
+  - user_id
+    - ユーザーの uuid
+    - 非公開？
+    - string
+    - 例: F-40-HOM-RCA-001
+  - content
+    - コメントそのもの
+    - 公開
+    - string
+    - 例: これは政治のニュースに対するコメントです．素晴らしい！
+  - created_at
+    - 生成時刻
+    - 公開
+    - string
+      - yyyy-MM-dd HH:mm:ss
+    - 例: 2024-10-18 16:20:46
+  - feedback_scores
+    - コメントの共感・なるほど・いまいちスコア
+    - 公開
+    - object
+    - 例: {"共感": 3, "なるほど": 4, "いまいち": 2}
+- user
+  - id
+    - ユーザー id
+    - プライマリ，識別用
+    - スラグ
+    - 公開
+    - string
+    - **例: F-40-HOM-RCA-001**
+  - gender
+    - ユーザーの性別
+    - 公開
+    - string
+    - 例: 女性
+  - age_group
+    - ユーザーの年齢層
+    - 公開
+    - string
+    - 例: 20 代
+  - occupation
+    - ユーザーの職業
+    - 公開
+    - string
+    - 例: 学生
+  - political_view
+    - ユーザーの政治的観点
+    - 非公開
+    - string
+    - 例: 中立、右翼、左翼
+  - opinion_tone
+    - 意見のトーン
+    - 非公開
+    - string
+    - 例: 賛同的、中立、批判的
+  - speech_style
+    - 話し方
+    - 非公開
+    - string
+    - 例: 優しい口調、端的…
+  - comment_length
+    - 生成予定のコメントの長さ
+    - 非公開
+    - string
+    - 例: 80 字
+  - background_knowledge
+    - 話題の背景知識
+    - 非公開
+    - string
+    - 例: 詳しくない、詳しい
+  - emotion
+    - 感情
+    - 非公開
+    - string
+    - 例: 驚き、同情…
