@@ -1,22 +1,32 @@
-package database
+package postgresql
 
 import (
 	"database/sql"
 	"errors"
 
+	"github.com/go-playground/validator"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
-type UsersRepository struct {
-	db *sql.DB
+type usersRepositoryImpl struct {
+	*PostgresqlDependency
 }
 
-func NewUsersRepository(db *sql.DB) *UsersRepository {
-	return &UsersRepository{db: db}
+func NewUsersRepository(deps *PostgresqlDependency) (*usersRepositoryImpl, error) {
+	err := validator.New().Struct(deps)
+	if err != nil {
+		return &usersRepositoryImpl{}, err
+	}
+
+	impl := usersRepositoryImpl{
+		deps,
+	}
+
+	return &impl, nil
 }
 
 // Create 新しいユーザーをデータベースに保存
-func (r *UsersRepository) Create(user models.User) (*models.User, error) {
+func (r *usersRepositoryImpl) Create(user models.User) (*models.User, error) {
 	query := `
         INSERT INTO users (id, comment_ids, gender, age_group, occupation, political_view, opinion_tone, speech_style, comment_length, background_knowledge, emotion)
 		// VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -41,7 +51,7 @@ func (r *UsersRepository) Create(user models.User) (*models.User, error) {
 }
 
 // Find ID に基づいて特定のユーザーを取得
-func (r *UsersRepository) Find(id string) (*models.User, error) {
+func (r *usersRepositoryImpl) Find(id string) (*models.User, error) {
 	query := `
         SELECT id, comment_ids, gender, age_group, occupation, political_view, opinion_tone, speech_style, comment_length, background_knowledge, emotion
 		FROM users
@@ -76,7 +86,7 @@ func (r *UsersRepository) Find(id string) (*models.User, error) {
 }
 
 // FindList 指定された ID のユーザーを取得
-func (r *UsersRepository) FindList(id string) ([]models.User, error) {
+func (r *usersRepositoryImpl) FindList(id string) ([]models.User, error) {
 	query := `
         SELECT id, comment_ids, gender, age_group, occupation, political_view, opinion_tone, speech_style, comment_length, background_knowledge, emotion
 		FROM users
@@ -120,7 +130,7 @@ func (r *UsersRepository) FindList(id string) ([]models.User, error) {
 }
 
 // Update 特定のユーザーを更新
-func (r *UsersRepository) Update(user models.User) (*models.User, error) {
+func (r *usersRepositoryImpl) Update(user models.User) (*models.User, error) {
 	query := `
 		UPDATE users
 		SET comment_ids = ?, gender = ?, age_group = ?, occupation = ?, political_view = ?, opinion_tone = ?, speech_style = ?, comment_length = ?, background_knowledge = ?, emotion = ?
@@ -146,7 +156,7 @@ func (r *UsersRepository) Update(user models.User) (*models.User, error) {
 }
 
 // Delete 指定された ID のユーザーを削除
-func (r *UsersRepository) Delete(id string) error {
+func (r *usersRepositoryImpl) Delete(id string) error {
 	query := `DELETE FROM users WHERE id = ?`
 	result, err := r.db.Exec(query, id)
 	if err != nil {

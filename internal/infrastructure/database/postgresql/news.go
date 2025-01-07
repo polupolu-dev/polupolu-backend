@@ -1,22 +1,32 @@
-package database
+package postgresql
 
 import (
 	"database/sql"
 	"errors"
 
+	"github.com/go-playground/validator"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
-type NewsRepository struct {
-	db *sql.DB
+func NewUserRepository(deps *PostgresqlDependency) (*newsRepositoryImpl, error) {
+	err := validator.New().Struct(deps)
+	if err != nil {
+		return &newsRepositoryImpl{}, err
+	}
+
+	impl := newsRepositoryImpl{
+		deps,
+	}
+
+	return &impl, nil
 }
 
-func NewNewsRepository(db *sql.DB) *NewsRepository {
-	return &NewsRepository{db: db}
+type newsRepositoryImpl struct {
+	*PostgresqlDependency
 }
 
 // Create 新しいニュースをデータベースに保存
-func (r *NewsRepository) Create(news models.News) (*models.News, error) {
+func (r *newsRepositoryImpl) Create(news models.News) (*models.News, error) {
 	query := `
     	INSERT INTO news (id, category, title, source, url, summary, empathy, publishedAt, empathy, insight, mediocre)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -40,7 +50,7 @@ func (r *NewsRepository) Create(news models.News) (*models.News, error) {
 }
 
 // Find ID に基づいて特定のニュースを取得
-func (r *NewsRepository) Find(id string) (*models.News, error) {
+func (r *newsRepositoryImpl) Find(id string) (*models.News, error) {
 	query := `
 		SELECT id, category, title, source, url, summary, empathy, publishedAt, empathy, insight, mediocre
 		FROM news
@@ -73,7 +83,7 @@ func (r *NewsRepository) Find(id string) (*models.News, error) {
 }
 
 // FindAll すべてのニュース取得
-func (r *NewsRepository) FindAll(category string) ([]models.News, error) {
+func (r *newsRepositoryImpl) FindAll(category string) ([]models.News, error) {
 	query := `
         SELECT id, category, title, source, url, summary, empathy, publishedAt, empathy, insight, mediocre
         FROM news
@@ -115,7 +125,7 @@ func (r *NewsRepository) FindAll(category string) ([]models.News, error) {
 }
 
 // FindList 指定されたカテゴリのニュース一覧を取得
-func (r *NewsRepository) FindList(category string) ([]models.News, error) {
+func (r *newsRepositoryImpl) FindList(category string) ([]models.News, error) {
 	query := `
 		SELECT id, category, title, source, url, summary, empathy, publishedAt, empathy, insight, mediocre
 		FROM news
@@ -159,7 +169,7 @@ func (r *NewsRepository) FindList(category string) ([]models.News, error) {
 }
 
 // Update 特定のニュースを更新
-func (r *NewsRepository) Update(news models.News) (*models.News, error) {
+func (r *newsRepositoryImpl) Update(news models.News) (*models.News, error) {
 	query := `
 		UPDATE news
 		SET category = ?, title = ?, source = ?, url = ?, summary = ?, empathy = ?, insight = ?, mediocre = ?
@@ -183,7 +193,7 @@ func (r *NewsRepository) Update(news models.News) (*models.News, error) {
 }
 
 // Delete 指定された ID のニュースを削除
-func (r *NewsRepository) Delete(id string) error {
+func (r *newsRepositoryImpl) Delete(id string) error {
 	query := `DELETE FROM news WHERE id = ?`
 	result, err := r.db.Exec(query, id)
 	if err != nil {
