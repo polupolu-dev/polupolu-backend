@@ -21,7 +21,7 @@ func (u *UsersUsecase) GetUser(userID string) (*models.User, error) {
 
 // 作成 (MVP)
 // 仕様: ユーザー構造体からユーザーを作成し，作成したユーザー構造体を返す
-func (u *UsersUsecase) CreateUser(user models.User) (*models.User, error) {
+func (u *UsersUsecase) CreateUser(user *models.User) (*models.User, error) {
 	return u.repo.Create(user)
 }
 
@@ -33,6 +33,6 @@ func (u *UsersUsecase) DeleteUser(userID string) error {
 
 // 仕様: ユーザー構造体からユーザーを更新し，更新したユーザー構造体を返す
 // 名前: updateUser
-func (u *UsersUsecase) UpdateUser(user models.User) (*models.User, error) {
+func (u *UsersUsecase) UpdateUser(user *models.User) (*models.User, error) {
 	return u.repo.Update(user)
 }

@@ -27,13 +27,13 @@ func (n *NewsUsecase) GetCategoryNews(category string) ([]models.News, error) {
 
 // ニュース作成 (MVP)
 // 仕様: ニュース構造体からニュースを作成し，作成したニュース構造体を返す
-func (n *NewsUsecase) CreateNews(news models.News) (*models.News, error) {
+func (n *NewsUsecase) CreateNews(news *models.News) (*models.News, error) {
 	return n.repo.Create(news)
 }
 
 // すべてのニュース取得
 // 仕様: すべてのニュース構造体を配列で取得する
-func (n *NewsUsecase) GetAllNews([]models.News, error) ([]models.News, error) {
+func (n *NewsUsecase) GetAllNews() ([]models.News, error) {
 	return n.repo.FindAll()
 }
 
@@ -45,6 +45,6 @@ func (n *NewsUsecase) DeleteNews(newsID string) error {
 
 // ニュースの更新
 // 仕様: ニュース構造体からニュースを更新し，ニュース構造体を返す
-func (n *NewsUsecase) UpdateNews(news models.News) (*models.News, error) {
+func (n *NewsUsecase) UpdateNews(news *models.News) (*models.News, error) {
 	return n.repo.Update(news)
 }

@@ -33,13 +33,13 @@ func (u *CommentsUsecase) GetUserComments(userID string) ([]models.Comment, erro
 
 // ニュースへのコメント作成 (MVP)
 // 仕様: コメント構造体からコメントを作成し，コメント構造体を返す
-func (u *CommentsUsecase) CreateComment(comment models.Comment) (*models.Comment, error) {
+func (u *CommentsUsecase) CreateComment(comment *models.Comment) (*models.Comment, error) {
 	return u.repo.Create(comment)
 }
 
 // コメントへの返信作成 (MVP)
 // 仕様: コメント構造体からコメントを作成し，コメント構造体を返す
-func (u *CommentsUsecase) CreateReply(comment models.Comment) (*models.Comment, error) {
+func (u *CommentsUsecase) CreateReply(comment *models.Comment) (*models.Comment, error) {
 	return u.repo.Create(comment)
 }
 
@@ -51,6 +51,6 @@ func (u *CommentsUsecase) DeleteComment(commentID string) error {
 
 // 更新
 // 仕様: コメント構造体からからコメントを更新し，コメント構造体を返す
-func (u *CommentsUsecase) UpdateComment(comment models.Comment) (*models.Comment, error) {
+func (u *CommentsUsecase) UpdateComment(comment *models.Comment) (*models.Comment, error) {
 	return u.repo.Update(comment)
 }
