@@ -1,8 +1,8 @@
 {
-  "news": {
+  "category": {
     "type": "object",
     "properties": {
-      "category": {
+      "name": {
         "description": "ニュースのカテゴリー名",
         "primary": true,
         "type": "string",
