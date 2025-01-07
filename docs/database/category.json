@@ -1,8 +1,8 @@
 {
-  "news": {
+  "category": {
     "type": "object",
     "properties": {
-      "category": {
+      "name": {
         "description": "ニュースのカテゴリー名",
         "primary": true,
         "type": "string",
@@ -14,7 +14,7 @@
         "description": "カテゴライズされたニュースIDの文字列配列",
         "primary": false,
         "type": "string",
-        "minimum": 1,
+        "minimum": 0,
         "maximum": 1023,
         "example": ["f9c4afa7-456f-4f0c-bce7-9a34b6489089"]
       }
