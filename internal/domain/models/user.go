@@ -1,5 +1,9 @@
 package models
 
+import (
+	"errors"
+)
+
 type User struct {
 	ID                  string   `json:"id"`
 	CommentIDs          []string `json:"comment_ids"`
@@ -12,4 +16,12 @@ type User struct {
 	CommentLength       uint32   `json:"comment_length"`
 	BackgroundKnowledge string   `json:"background_knowledge"`
 	Emotion             string   `json:"emotion"`
+}
+
+func (n *News) UserValidate() error {
+	if n.ID == "" {
+		return errors.New("ID is required")
+	}
+
+	return nil
 }
