@@ -8,14 +8,12 @@ import (
 )
 
 type NewsUsecase struct {
-	newsRepo   interfaces.NewsRepository
-	llmService interfaces.LLMService
+	newsRepo interfaces.NewsRepository
 }
 
-func NewNewsUsecase(nr interfaces.NewsRepository, ls interfaces.LLMService) *NewsUsecase {
+func NewNewsUsecase(nr interfaces.NewsRepository) *NewsUsecase {
 	return &NewsUsecase{
-		newsRepo:   nr,
-		llmService: ls,
+		newsRepo: nr,
 	}
 }
 
