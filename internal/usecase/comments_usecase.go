@@ -7,18 +7,20 @@ import (
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
-type CommentsUsecase struct {
-	commentRepo interfaces.CommentRepository
-	llmService  interfaces.LLMService
-}
-
 const (
 	prompt = "ニュースに対するコメントを生成してください"
 )
 
-func NewCommentsUsecase(cr interfaces.CommentRepository, ls interfaces.LLMService) *CommentsUsecase {
+type CommentsUsecase struct {
+	commentRepo interfaces.CommentRepository
+	newsRepo    interfaces.NewsRepository
+	llmService  interfaces.LLMService
+}
+
+func NewCommentsUsecase(cr interfaces.CommentRepository, nr interfaces.NewsRepository, ls interfaces.LLMService) *CommentsUsecase {
 	return &CommentsUsecase{
 		commentRepo: cr,
+		newsRepo:    nr,
 		llmService:  ls,
 	}
 }
@@ -43,16 +45,24 @@ func (uc *CommentsUsecase) GetUserComments(ctx context.Context, userID string) (
 
 // ニュースへのコメント作成 (MVP)
 // 仕様: コメント構造体からコメントを作成し，コメント構造体を返す
-func (uc *CommentsUsecase) CreateComment(ctx context.Context, comment *models.Comment, news *models.News) error {
+func (uc *CommentsUsecase) CreateComment(ctx context.Context, comment *models.Comment, newsID string) error {
 	if comment.Content != "" {
 		return uc.commentRepo.Create(ctx, comment)
 	}
 
-	var err error
-	comment.Content, err = uc.llmService.GenerateComment(ctx, news.Summary, prompt)
+	// ニュースの取得
+	news, err := uc.newsRepo.GetByID(ctx, newsID)
 	if err != nil {
 		return err
 	}
+
+	// コメントの生成
+	content, err := uc.llmService.GenerateComment(ctx, news.Summary, prompt)
+	if err != nil {
+		return err
+	}
+	comment.Content = content
+
 	return uc.commentRepo.Create(ctx, comment)
 }
 
