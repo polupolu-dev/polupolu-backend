@@ -9,15 +9,15 @@ import (
 // ニュースデータソースと対話するメソッドを定義
 type NewsRepository interface {
 	// 作成
-	Create(ctx context.Context, news *models.News) (*models.News, error)
+	Create(ctx context.Context, news *models.News) error
 
 	// 探索（読み込み）
-	Find(ctx context.Context, id string) (*models.News, error)
-	FindAll(ctx context.Context) ([]models.News, error)
-	FindList(ctx context.Context, category string) ([]models.News, error)
+	GetAll(ctx context.Context) ([]models.News, error)
+	GetByID(ctx context.Context, id string) (*models.News, error)
+	GetByCategory(ctx context.Context, category string) ([]models.News, error)
 
 	// 更新
-	Update(ctx context.Context, news *models.News) (*models.News, error)
+	Update(ctx context.Context, news *models.News) error
 
 	// 削除
 	Delete(ctx context.Context, id string) error
