@@ -1,50 +1,55 @@
 package usecase
 
 import (
+	"context"
+
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
 type NewsUsecase struct {
-	repo interfaces.NewsRepository
+	newsRepo interfaces.NewsRepository
 }
 
-func NewNewsUsecase(repo interfaces.NewsRepository) *NewsUsecase {
-	return &NewsUsecase{repo: repo}
+func NewNewsUsecase(nr interfaces.NewsRepository) *NewsUsecase {
+	return &NewsUsecase{
+		newsRepo: nr,
+	}
 }
 
 // ニュース詳細取得 (MVP)
 // 仕様: `news_id` からニュース構造体を取得
-func (n *NewsUsecase) GetNewsDetail(newsID string) (*models.News, error) {
-	return n.repo.Find(newsID)
+func (uc *NewsUsecase) GetNewsDetail(ctx context.Context, id string) (*models.News, error) {
+	// ewsUseCase) GetNews(ctx context.Context, id string) (*models.News, error) {
+	return uc.newsRepo.GetByID(ctx, id)
 }
 
 // 特定カテゴリのニュース取得 (MVP)
 // 仕様: `category` からカテゴリをキーに持つカテゴリ構造体の配列を取 得する
-func (n *NewsUsecase) GetCategoryNews(category string) ([]models.News, error) {
-	return n.repo.FindList(category)
+func (uc *NewsUsecase) GetCategoryNews(ctx context.Context, category string) ([]models.News, error) {
+	return uc.newsRepo.GetByCategory(ctx, category)
 }
 
 // ニュース作成 (MVP)
 // 仕様: ニュース構造体からニュースを作成し，作成したニュース構造体を返す
-func (n *NewsUsecase) CreateNews(news *models.News) (*models.News, error) {
-	return n.repo.Create(news)
+func (un *NewsUsecase) CreateNews(ctx context.Context, news *models.News) error {
+	return un.newsRepo.Create(ctx, news)
 }
 
 // すべてのニュース取得
 // 仕様: すべてのニュース構造体を配列で取得する
-func (n *NewsUsecase) GetAllNews() ([]models.News, error) {
-	return n.repo.FindAll()
+func (un *NewsUsecase) GetAllNews(ctx context.Context) ([]models.News, error) {
+	return un.newsRepo.GetAll(ctx)
 }
 
 // ニュースの削除
 // 仕様: `news_id` からニュースを削除する
-func (n *NewsUsecase) DeleteNews(newsID string) error {
-	return n.repo.Delete(newsID)
+func (un *NewsUsecase) DeleteNews(ctx context.Context, id string) error {
+	return un.newsRepo.Delete(ctx, id)
 }
 
 // ニュースの更新
 // 仕様: ニュース構造体からニュースを更新し，ニュース構造体を返す
-func (n *NewsUsecase) UpdateNews(news *models.News) (*models.News, error) {
-	return n.repo.Update(news)
+func (un *NewsUsecase) UpdateNews(ctx context.Context, news *models.News) error {
+	return un.newsRepo.Update(ctx, news)
 }
