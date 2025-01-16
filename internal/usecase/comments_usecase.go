@@ -1,56 +1,75 @@
 package usecase
 
 import (
+	"context"
+
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
 type CommentsUsecase struct {
-	repo interfaces.CommentRepository
+	commentRepo interfaces.CommentRepository
+	llmService  interfaces.LLMService
 }
 
-func NewCommentsUsecase(repo interfaces.CommentRepository) *CommentsUsecase {
-	return &CommentsUsecase{repo: repo}
+const (
+	prompt = "ニュースに対するコメントを生成してください"
+)
+
+func NewCommentsUsecase(cr interfaces.CommentRepository, ls interfaces.LLMService) *CommentsUsecase {
+	return &CommentsUsecase{
+		commentRepo: cr,
+		llmService:  ls,
+	}
 }
 
 // ニュースへのコメント一覧取得 (MVP)
 // 仕様: `news_id` からコメント構造体の配列を取得する
-func (u *CommentsUsecase) GetCommentsForNews(newsID string) ([]models.Comment, error) {
-	return u.repo.FindList(newsID)
+func (uc *CommentsUsecase) GetCommentsForNews(ctx context.Context, newsID string) ([]models.Comment, error) {
+	return uc.commentRepo.GetByID(ctx, newsID)
 }
 
 // 特定コメント取得 (MVP)
 // 仕様: `comment_id` からコメント構造体を取得する
-func (u *CommentsUsecase) GetComment(commentID string) (*models.Comment, error) {
-	return u.repo.Find(commentID)
+func (uc *CommentsUsecase) GetComment(ctx context.Context, commentID string) (*models.Comment, error) {
+	return uc.commentRepo.GetByCommentID(ctx, commentID)
 }
 
 // 特定ユーザーのコメント一覧取得 (MVP)
 // 仕様: `user_id` からコメント構造体の配列を取得する
-func (u *CommentsUsecase) GetUserComments(userID string) ([]models.Comment, error) {
-	return u.repo.FindList(userID)
+func (uc *CommentsUsecase) GetUserComments(ctx context.Context, userID string) ([]models.Comment, error) {
+	return uc.commentRepo.GetByID(ctx, userID)
 }
 
 // ニュースへのコメント作成 (MVP)
 // 仕様: コメント構造体からコメントを作成し，コメント構造体を返す
-func (u *CommentsUsecase) CreateComment(comment *models.Comment) (*models.Comment, error) {
-	return u.repo.Create(comment)
+func (uc *CommentsUsecase) CreateComment(ctx context.Context, comment *models.Comment, news *models.News) error {
+	if comment.Content != "" {
+		return uc.commentRepo.Create(ctx, comment)
+	}
+
+	var err error
+	comment.Content, err = uc.llmService.GenerateComment(ctx, news.Summary, prompt)
+	if err != nil {
+		return err
+	}
+	return uc.commentRepo.Create(ctx, comment)
 }
 
 // コメントへの返信作成 (MVP)
 // 仕様: コメント構造体からコメントを作成し，コメント構造体を返す
-func (u *CommentsUsecase) CreateReply(comment *models.Comment) (*models.Comment, error) {
-	return u.repo.Create(comment)
+func (uc *CommentsUsecase) CreateReply(ctx context.Context, comment *models.Comment) error {
+	return uc.commentRepo.Create(ctx, comment)
 }
 
 // 削除
 // 仕様: `comment_id` からコメントを削除する
-func (u *CommentsUsecase) DeleteComment(commentID string) error {
-	return u.repo.Delete(commentID)
+func (uc *CommentsUsecase) DeleteComment(ctx context.Context, commentID string) error {
+	return uc.commentRepo.Delete(ctx, commentID)
 }
 
 // 更新
 // 仕様: コメント構造体からからコメントを更新し，コメント構造体を返す
-func (u *CommentsUsecase) UpdateComment(comment *models.Comment) (*models.Comment, error) {
-	return u.repo.Update(comment)
+func (uc *CommentsUsecase) UpdateComment(ctx context.Context, comment *models.Comment) error {
+	return uc.commentRepo.Update(ctx, comment)
 }
