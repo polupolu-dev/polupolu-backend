@@ -8,13 +8,13 @@ import (
 
 type UserRepository interface {
 	// 作成
-	Create(ctx context.Context, user *models.User) (*models.User, error)
+	Create(ctx context.Context, user *models.User) error
 
 	// 探索（読み込み）
-	Find(ctx context.Context, id string) (*models.User, error)
+	Get(ctx context.Context, id string) (*models.User, error)
 
 	// 更新
-	Update(ctx context.Context, user *models.User) (*models.User, error)
+	Update(ctx context.Context, user *models.User) error
 
 	// 削除
 	Delete(ctx context.Context, id string) error
