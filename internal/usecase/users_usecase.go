@@ -1,38 +1,42 @@
 package usecase
 
 import (
+	"context"
+
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
 type UsersUsecase struct {
-	repo interfaces.UserRepository
+	userRepo interfaces.UserRepository
 }
 
-func NewUsersUsecase(repo interfaces.UserRepository) *UsersUsecase {
-	return &UsersUsecase{repo: repo}
+func NewUsersUsecase(ur interfaces.UserRepository) *UsersUsecase {
+	return &UsersUsecase{
+		userRepo: ur,
+	}
 }
 
 // 取得 (MVP)
 // 仕様: `user_id` からユーザー構造体を取得
-func (u *UsersUsecase) GetUser(userID string) (*models.User, error) {
-	return u.repo.Find(userID)
+func (uc *UsersUsecase) GetUser(ctx context.Context, userID string) (*models.User, error) {
+	return uc.userRepo.Get(ctx, userID)
 }
 
 // 作成 (MVP)
 // 仕様: ユーザー構造体からユーザーを作成し，作成したユーザー構造体を返す
-func (u *UsersUsecase) CreateUser(user *models.User) (*models.User, error) {
-	return u.repo.Create(user)
+func (uc *UsersUsecase) CreateUser(ctx context.Context, user *models.User) error {
+	return uc.userRepo.Create(ctx, user)
 }
 
 // 削除
 // 仕様: `user_id` からユーザーを削除する
-func (u *UsersUsecase) DeleteUser(userID string) error {
-	return u.repo.Delete(userID)
+func (uc *UsersUsecase) DeleteUser(ctx context.Context, userID string) error {
+	return uc.userRepo.Delete(ctx, userID)
 }
 
 // 仕様: ユーザー構造体からユーザーを更新し，更新したユーザー構造体を返す
 // 名前: updateUser
-func (u *UsersUsecase) UpdateUser(user *models.User) (*models.User, error) {
-	return u.repo.Update(user)
+func (uc *UsersUsecase) UpdateUser(ctx context.Context, user *models.User) error {
+	return uc.userRepo.Update(ctx, user)
 }
