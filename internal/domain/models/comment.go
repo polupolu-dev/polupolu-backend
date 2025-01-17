@@ -17,7 +17,7 @@ type Comment struct {
 	FeedbackScores FeedbackScores `json:"feedback_scores"` // コメントの共感・なるほど・いまいちスコア
 
 	// オプショナル
-	RepliedIDs []string `json:"replied_ids"` // 返信として付けられたコメントIDの文字列配列
+	RepliedIDs []uuid.UUID `json:"replied_ids"` // 返信として付けられたコメントIDの文字列配列
 }
 
 // string で必須の項目のバリデーション
