@@ -3,30 +3,25 @@ services:
     build:
       context: .
       dockerfile: docker/develop/Dockerfile
-    volumes:
-      - ./:/go/src/polupolu-backend
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env
     depends_on:
       db:
         condition: service_healthy
-  db:
-    platform: linux/x86_64
-    image: postgres:16.3
+    env_file:
+      - .env
     ports:
-      - "${DB_PORT}:5432"
-    volumes:
-      - db-store:/var/lib/postgresql/data
-      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - "8080:8080"
+        volumes:
+      - ./:/go/src/polupolu-backend
+  postgres:
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_HOST=${DB_HOST}
       - POSTGRES_DB=${DB_NAME}
-    restart: always
     healthcheck: # here
+      interval: 30s
+      retries: 6
+      start_period: 30s
       test:
         [
           "CMD-SHELL",
@@ -38,9 +33,14 @@ services:
           "-d",
           "${DB_NAME}",
         ]
-      interval: 30s
       timeout: 5s
-      retries: 6
-      start_period: 30s
-volumes:
+    image: postgres:16.3
+    platform: linux/x86_64
+    ports:
+      - "${DB_PORT}:5432"
+    restart: always
+    volumes:
+      - db-store:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    volumes:
   db-store:
