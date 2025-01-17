@@ -46,6 +46,12 @@ func (uc *CommentUsecase) GetComment(ctx context.Context, commentID uuid.UUID) (
 // 特定ユーザーのコメント一覧取得 (MVP)
 // 仕様: `user_id` からコメント構造体の配列を取得する
 func (uc *CommentUsecase) GetUserComments(ctx context.Context, userID uuid.UUID) ([]models.Comment, error) {
+	// ユーザーが存在することを検証
+	_, err := uc.userRepo.Get(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
 	return uc.commentRepo.GetByID(ctx, userID)
 }
 
