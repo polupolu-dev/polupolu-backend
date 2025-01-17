@@ -9,17 +9,22 @@
 ### 成功
 
 - HTTP/1.1 200 OK
-  - 未確認
   ```bash
   curl http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
   ```json
   {
-    "id": "user123",
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "created_at": "2023-10-27T10:00:00Z",
-    "updated_at": "2023-10-27T10:00:00Z"
+    "id": "ca84473f-d3a2-4b36-b418-ddbdb2964c1b",
+    "comment_ids": [],
+    "gender": "",
+    "age_group": 0,
+    "occupation": "",
+    "political_view": "",
+    "opinion_tone": "",
+    "speech_style": "",
+    "comment_length": 0,
+    "background_knowledge": "",
+    "emotion": ""
   }
   ```
 
@@ -43,34 +48,31 @@
 ### 成功
 
 - HTTP/1.1 201 Created
-  - 未確認
   ```bash
   curl -X POST \
     -H "Content-Type: application/json" \
-    -d '{ "id": "ca84473f-d3a2-4b36-b418-ddbdb2964c1b" }' \
+    -d '{ "id": "ca84473f-d3a2-4b36-b418-ddbdb2964c1b", "gender": "男性" }' \
     http://localhost:8080/api/v1/users
   ```
-  - レスポンスヘッダの `Location` で作成されたユーザーの URI を返す
+  - [TODO] レスポンスヘッダの `Location` で作成されたユーザーの URI を返す
   - `Location: /api/v1/users/new_user`
-  ```json
-  {
-    "id": "new_user",
-    "name": "Jane Doe",
-    "email": "jane.doe@example.com",
-    "created_at": "2023-10-27T12:00:00Z",
-    "updated_at": "2023-10-27T12:00:00Z"
-  }
-  ```
 
 ### 失敗
 
 - HTTP/1.1 400 Bad Request
-  - 未確認
-  - リクエストボディが不正
+  - リクエストボディが不正（id がない）
+  - [TODO] エラーにする
   ```bash
     curl -X POST \
       -H "Content-Type: application/json" \
-      -d '{ "name": "Jane Doe" }' \
+      -d '{ "gender": "男性" }' \
+      http://localhost:8080/api/v1/users
+  ```
+  - リクエストボディが不正（大き過ぎる）
+  ```bash
+    curl -X POST \
+      -H "Content-Type: application/json" \
+      -d '{ "id": "ca84473f-d3a2-4b36-b418-ddbdb2964c1b", "age_group": "999" }' \
       http://localhost:8080/api/v1/users
   ```
   - UUID でない ID
@@ -81,16 +83,15 @@
       http://localhost:8080/api/v1/users
   ```
 - HTTP/1.1 409 Conflict
-  - 未確認
   - 同じユーザー ID でユーザーが既に存在する場合
+  - [TODO] ステータスコードを修正 500 -> 409
   ```bash
     curl -X POST \
       -H "Content-Type: application/json" \
-      -d '{ "id": "user123", "name": "Jane Doe", "email": "jane.doe@example.com" }' \
+      -d '{ "id": "ca84473f-d3a2-4b36-b418-ddbdb2964c1b" }' \
       http://localhost:8080/api/v1/users
   ```
 - HTTP/1.1 500 Internal Server Error
-  - 未確認
   - データの作成中にエラー
 
 ## ユーザー削除
@@ -104,25 +105,24 @@
 - HTTP/1.1 204 No Content
   - 未確認
   ```bash
-  curl -X DELETE http://localhost:8080/api/v1/users/user123
+  curl -X DELETE http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
 
 ### 失敗
 
-- HTTP/1.1 404 Not Found
-  - 未確認
+- HTTP/1.1 400 Bad Request
   - ID に対応するユーザーが存在しない（削除済み）
+  - [TODO] 404 番へ変更検討
   ```bash
   curl -X DELETE http://localhost:8080/api/v1/users/not-exist-user
   ```
 - HTTP/1.1 409 Conflict
-  - 未確認
+  - [TODO] 未確認
   - リソースがロック中
   ```bash
   curl -X DELETE http://localhost:8080/api/v1/users/user123
   ```
 - HTTP/1.1 500 Internal Server Error
-  - 未確認
   - データの削除中にエラー
 
 ## ユーザー更新
@@ -138,8 +138,8 @@
   ```bash
   curl -X PUT \
     -H "Content-Type: application/json" \
-    -d '{ "name": "Updated Name", "email": "updated@example.com" }' \
-    http://localhost:8080/api/v1/users/user123
+    -d '{ "occupation": "学生", "comment_ids": ["f81e95ef-0320-4810-be74-39af2571312f"] }' \
+    http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
 - HTTP/1.1 201 Created (新規で作成成功)
   - 未確認
@@ -147,7 +147,7 @@
     curl -X PUT \
       -H "Content-Type: application/json" \
       -d '{ "id": "new_user", "name": "New User", "email": "new@example.com" }' \
-      http://localhost:8080/api/v1/users/new_user
+      http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
   - レスポンスヘッダの `Location` で作成されたユーザーの URI を返す
   - `Location: /api/v1/users/new_user`
@@ -170,7 +170,7 @@
     curl -X PUT \
       -H "Content-Type: application/json" \
       -d '{ "email": "updated@example.com" }' \
-      http://localhost:8080/api/v1/users/user123
+      http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
 - HTTP/1.1 404 Not Found
   - 未確認
@@ -188,14 +188,14 @@
     curl -X PUT \
       -H "Content-Type: application/json" \
       -d '{ "name": "更新" }' \
-      http://localhost:8080/api/v1/users/user123
+      http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
   - リソースがロック中
   ```bash
     curl -X PUT \
       -H "Content-Type: application/json" \
       -d '{ "name": "更新" }' \
-      http://localhost:8080/api/v1/users/user123
+      http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
 - HTTP/1.1 500 Internal Server Error
   - 未確認
