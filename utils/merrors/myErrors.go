@@ -8,9 +8,9 @@ const (
 
 type Error struct {
 	Code    string
-	Message string
+	Message error
 }
 
-func NewError(code, message string) *Error {
+func NewError(code string, message error) *Error {
 	return &Error{Code: code, Message: message}
 }
