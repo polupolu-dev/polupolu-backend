@@ -3,8 +3,8 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 
+	"github.com/google/uuid"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
@@ -16,10 +16,10 @@ func NewCommentRepository(db *sql.DB) *CommentRepository {
 	return &CommentRepository{db: db}
 }
 
-func (r *CommentRepository) GetByID(ctx context.Context, id string) ([]models.Comment, error) {
+func (r *CommentRepository) GetByID(ctx context.Context, id uuid.UUID) ([]models.Comment, error) {
 	query := `
 		SELECT id, reply_to_id, user_id, content, created_at, 
-		       feedback_scores, replied_ids
+	           empathy, insight, mediocre, replied_ids
 		FROM comments WHERE id = $1
 	`
 	rows, err := r.db.QueryContext(ctx, query, id)
@@ -31,8 +31,6 @@ func (r *CommentRepository) GetByID(ctx context.Context, id string) ([]models.Co
 	var comments []models.Comment
 	for rows.Next() {
 		var comment models.Comment
-		var feedbackScoresJSON []byte
-		var repliedIDsJSON []byte
 
 		err := rows.Scan(
 			&comment.ID,
@@ -40,19 +38,11 @@ func (r *CommentRepository) GetByID(ctx context.Context, id string) ([]models.Co
 			&comment.UserID,
 			&comment.Content,
 			&comment.CreatedAt,
-			&feedbackScoresJSON,
-			&repliedIDsJSON,
+			&comment.FeedbackScores.Empathy,
+			&comment.FeedbackScores.Insight,
+			&comment.FeedbackScores.Mediocre,
+			&comment.RepliedIDs,
 		)
-		if err != nil {
-			return nil, err
-		}
-
-		err = json.Unmarshal(feedbackScoresJSON, &comment.FeedbackScores)
-		if err != nil {
-			return nil, err
-		}
-
-		err = json.Unmarshal(repliedIDsJSON, &comment.RepliedIDs)
 		if err != nil {
 			return nil, err
 		}
@@ -63,16 +53,14 @@ func (r *CommentRepository) GetByID(ctx context.Context, id string) ([]models.Co
 	return comments, nil
 }
 
-func (r *CommentRepository) GetByCommentID(ctx context.Context, commentID string) (*models.Comment, error) {
+func (r *CommentRepository) GetByCommentID(ctx context.Context, commentID uuid.UUID) (*models.Comment, error) {
 	query := `
 		SELECT id, reply_to_id, user_id, content, created_at, 
-		       feedback_scores, replied_ids
+		       empathy, insight, mediocre, replied_ids
 		FROM comments WHERE id = $1
 	`
 
 	var comment models.Comment
-	var feedbackScoresJSON []byte
-	var repliedIDsJSON []byte
 
 	err := r.db.QueryRowContext(ctx, query, commentID).Scan(
 		&comment.ID,
@@ -80,19 +68,11 @@ func (r *CommentRepository) GetByCommentID(ctx context.Context, commentID string
 		&comment.UserID,
 		&comment.Content,
 		&comment.CreatedAt,
-		&feedbackScoresJSON,
-		&repliedIDsJSON,
+		&comment.FeedbackScores.Empathy,
+		&comment.FeedbackScores.Insight,
+		&comment.FeedbackScores.Mediocre,
+		&comment.RepliedIDs,
 	)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(feedbackScoresJSON, &comment.FeedbackScores)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(repliedIDsJSON, &comment.RepliedIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -101,66 +81,51 @@ func (r *CommentRepository) GetByCommentID(ctx context.Context, commentID string
 }
 
 func (r *CommentRepository) Create(ctx context.Context, comment *models.Comment) error {
-	feedbackScoresJSON, err := json.Marshal(comment.FeedbackScores)
-	if err != nil {
-		return err
-	}
-
-	repliedIDsJSON, err := json.Marshal(comment.RepliedIDs)
-	if err != nil {
-		return err
-	}
-
 	query := `
 		INSERT INTO comments (id, reply_to_id, user_id, content, created_at, 
-		                     feedback_scores, replied_ids)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		                     empathy, insight, mediocre, replied_ids)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	`
 
-	_, err = r.db.ExecContext(ctx, query,
+	_, err := r.db.ExecContext(ctx, query,
 		comment.ID,
 		comment.ReplyToID,
 		comment.UserID,
 		comment.Content,
 		comment.CreatedAt,
-		feedbackScoresJSON,
-		repliedIDsJSON,
+		comment.FeedbackScores.Empathy,
+		comment.FeedbackScores.Insight,
+		comment.FeedbackScores.Mediocre,
+		comment.RepliedIDs,
 	)
 
 	return err
 }
 
 func (r *CommentRepository) Update(ctx context.Context, comment *models.Comment) error {
-	feedbackScoresJSON, err := json.Marshal(comment.FeedbackScores)
-	if err != nil {
-		return err
-	}
-
-	repliedIDsJSON, err := json.Marshal(comment.RepliedIDs)
-	if err != nil {
-		return err
-	}
-
 	query := `
 		UPDATE comments 
 		SET reply_to_id = $2, user_id = $3, content = $4, 
-		    feedback_scores = $5, replied_ids = $6
+            empathy = $5, insight = $6, mediocre = $7, 
+		    feedback_scores = $8, replied_ids = $9
 		WHERE id = $1
 	`
 
-	_, err = r.db.ExecContext(ctx, query,
+	_, err := r.db.ExecContext(ctx, query,
 		comment.ID,
 		comment.ReplyToID,
 		comment.UserID,
 		comment.Content,
-		feedbackScoresJSON,
-		repliedIDsJSON,
+		comment.FeedbackScores.Empathy,
+		comment.FeedbackScores.Insight,
+		comment.FeedbackScores.Mediocre,
+		comment.RepliedIDs,
 	)
 
 	return err
 }
 
-func (r *CommentRepository) Delete(ctx context.Context, id string) error {
+func (r *CommentRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	query := `DELETE FROM comments WHERE id = $1`
 	_, err := r.db.ExecContext(ctx, query, id)
 	return err
