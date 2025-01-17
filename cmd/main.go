@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	_ "github.com/lib/pq"
 	"github.com/polupolu-dev/polupolu-backend/internal/adapter/handlers"
 	"github.com/polupolu-dev/polupolu-backend/internal/adapter/router"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
