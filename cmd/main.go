@@ -11,10 +11,15 @@ import (
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/infrastructure/postgres"
 	"github.com/polupolu-dev/polupolu-backend/internal/usecase"
+	"github.com/polupolu-dev/polupolu-backend/utils/config"
 )
 
 func main() {
-	dbConn, err := sql.Open("postgres", "user=your_user dbname=your_db sslmode=disable")
+	if err := config.LoadEnv(); err != nil {
+		log.Fatal(err)
+	}
+
+	dbConn, err := sql.Open("postgres", config.DB_DSN)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
