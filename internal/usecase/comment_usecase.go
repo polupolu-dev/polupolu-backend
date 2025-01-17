@@ -26,7 +26,7 @@ func NewCommentUsecase(cr interfaces.CommentRepository, nr interfaces.NewsReposi
 
 // ニュースへのコメント一覧取得 (MVP)
 // 仕様: `news_id` からコメント構造体の配列を取得する
-func (uc *CommentUsecase) GetCommentForNews(ctx context.Context, newsID string) ([]models.Comment, error) {
+func (uc *CommentUsecase) GetCommentsForNews(ctx context.Context, newsID string) ([]models.Comment, error) {
 	return uc.commentRepo.GetByID(ctx, newsID)
 }
 
@@ -38,7 +38,7 @@ func (uc *CommentUsecase) GetComment(ctx context.Context, commentID string) (*mo
 
 // 特定ユーザーのコメント一覧取得 (MVP)
 // 仕様: `user_id` からコメント構造体の配列を取得する
-func (uc *CommentUsecase) GetUserComment(ctx context.Context, userID string) ([]models.Comment, error) {
+func (uc *CommentUsecase) GetUserComments(ctx context.Context, userID string) ([]models.Comment, error) {
 	return uc.commentRepo.GetByID(ctx, userID)
 }
 
