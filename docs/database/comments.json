@@ -51,7 +51,7 @@
         "comment": ".-..-...-...-... 形式，ハイフン以外は半角大文字英数のランダム"
       },
       "content": {
-        "description": "コメントそのもの",
+        "description": "コメント内容",
         "primary": false,
         "type": "string",
         "minimum": 1,
@@ -109,7 +109,6 @@
     "required": [
       "id",
       "reply_to_id",
-      "replied_ids",
       "user_id",
       "content",
       "created_at",

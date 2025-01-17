@@ -20,7 +20,7 @@
         "example": "政治"
       },
       "title": {
-        "description": "  - ニュースのタイトル（引用元のページのタイトルと同じ）",
+        "description": "ニュースのタイトル（引用元のページのタイトルと同じ）",
         "primary": false,
         "type": "string",
         "minimum": 1,
@@ -108,14 +108,12 @@
     },
     "required": [
       "id",
-      "category",
       "title",
       "source",
       "url",
       "summary",
       "published_at",
-      "feedback_scores",
-      "comment_ids"
+      "feedback_scores"
     ]
   }
 }
