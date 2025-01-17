@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 	"github.com/polupolu-dev/polupolu-backend/internal/usecase"
@@ -19,12 +20,18 @@ func NewNewsHandler(nu *usecase.NewsUsecase) *NewsHandler {
 
 func (h *NewsHandler) GetNewsDetail(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	newsID := vars["news_id"]
+	newsID, err := uuid.Parse(vars["news_id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	news, err := h.newsUseCase.GetNewsDetail(r.Context(), newsID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(news)
@@ -33,11 +40,13 @@ func (h *NewsHandler) GetNewsDetail(w http.ResponseWriter, r *http.Request) {
 func (h *NewsHandler) GetCategoryNews(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	category := vars["category"]
+
 	news, err := h.newsUseCase.GetCategoryNews(r.Context(), category)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(news)
@@ -49,11 +58,13 @@ func (h *NewsHandler) CreateNews(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	if err := h.newsUseCase.CreateNews(r.Context(), &news); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Location", "/api/v1/news/"+news.ID)
+
+	w.Header().Set("Location", "/api/v1/news/"+news.ID.String())
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -63,6 +74,7 @@ func (h *NewsHandler) GetAllNews(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(news)
@@ -70,12 +82,17 @@ func (h *NewsHandler) GetAllNews(w http.ResponseWriter, r *http.Request) {
 
 func (h *NewsHandler) DeleteNews(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	newsID := vars["news_id"]
-	err := h.newsUseCase.DeleteNews(r.Context(), newsID)
+	newsID, err := uuid.Parse(vars["news_id"])
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := h.newsUseCase.DeleteNews(r.Context(), newsID); err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -86,10 +103,12 @@ func (h *NewsHandler) UpdateNews(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	if err := h.newsUseCase.UpdateNews(r.Context(), &news); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Location", "/api/v1/news/"+news.ID)
+
+	w.Header().Set("Location", "/api/v1/news/"+news.ID.String())
 	w.WriteHeader(http.StatusCreated)
 }

@@ -24,8 +24,8 @@ type News struct {
 	FeedbackScores FeedbackScores `json:"feedback_scores"` // 共感・なるほど・いまいちスコア
 
 	// オプショナル
-	Category   string   `json:"category"`    // ニュースのカテゴリー名
-	CommentIDs []string `json:"comment_ids"` // 付けられたコメントIDの文字列配列
+	Category   string      `json:"category"`    // ニュースのカテゴリー名
+	CommentIDs []uuid.UUID `json:"comment_ids"` // 付けられたコメントIDの文字列配列
 }
 
 // string で必須の項目のバリデーション
