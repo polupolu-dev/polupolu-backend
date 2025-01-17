@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/polupolu-dev/polupolu-backend/consts"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
@@ -22,7 +23,7 @@ func NewNewsUsecase(nr interfaces.NewsRepository, ls interfaces.LLMService) *New
 
 // ニュース詳細取得 (MVP)
 // 仕様: `news_id` からニュース構造体を取得
-func (uc *NewsUsecase) GetNewsDetail(ctx context.Context, newsID string) (*models.News, error) {
+func (uc *NewsUsecase) GetNewsDetail(ctx context.Context, newsID uuid.UUID) (*models.News, error) {
 	return uc.newsRepo.GetByID(ctx, newsID)
 }
 
@@ -54,8 +55,8 @@ func (uc *NewsUsecase) GetAllNews(ctx context.Context) ([]models.News, error) {
 
 // ニュースの削除
 // 仕様: `news_id` からニュースを削除する
-func (uc *NewsUsecase) DeleteNews(ctx context.Context, id string) error {
-	return uc.newsRepo.Delete(ctx, id)
+func (uc *NewsUsecase) DeleteNews(ctx context.Context, newsID uuid.UUID) error {
+	return uc.newsRepo.Delete(ctx, newsID)
 }
 
 // ニュースの更新

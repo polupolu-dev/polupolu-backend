@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/polupolu-dev/polupolu-backend/consts"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
@@ -26,19 +27,19 @@ func NewCommentUsecase(cr interfaces.CommentRepository, nr interfaces.NewsReposi
 
 // ニュースへのコメント一覧取得 (MVP)
 // 仕様: `news_id` からコメント構造体の配列を取得する
-func (uc *CommentUsecase) GetCommentsForNews(ctx context.Context, newsID string) ([]models.Comment, error) {
+func (uc *CommentUsecase) GetCommentsForNews(ctx context.Context, newsID uuid.UUID) ([]models.Comment, error) {
 	return uc.commentRepo.GetByID(ctx, newsID)
 }
 
 // 特定コメント取得 (MVP)
 // 仕様: `comment_id` からコメント構造体を取得する
-func (uc *CommentUsecase) GetComment(ctx context.Context, commentID string) (*models.Comment, error) {
+func (uc *CommentUsecase) GetComment(ctx context.Context, commentID uuid.UUID) (*models.Comment, error) {
 	return uc.commentRepo.GetByCommentID(ctx, commentID)
 }
 
 // 特定ユーザーのコメント一覧取得 (MVP)
 // 仕様: `user_id` からコメント構造体の配列を取得する
-func (uc *CommentUsecase) GetUserComments(ctx context.Context, userID string) ([]models.Comment, error) {
+func (uc *CommentUsecase) GetUserComments(ctx context.Context, userID uuid.UUID) ([]models.Comment, error) {
 	return uc.commentRepo.GetByID(ctx, userID)
 }
 
@@ -86,7 +87,7 @@ func (uc *CommentUsecase) CreateReply(ctx context.Context, reply *models.Comment
 
 // 削除
 // 仕様: `comment_id` からコメントを削除する
-func (uc *CommentUsecase) DeleteComment(ctx context.Context, commentID string) error {
+func (uc *CommentUsecase) DeleteComment(ctx context.Context, commentID uuid.UUID) error {
 	return uc.commentRepo.Delete(ctx, commentID)
 }
 
