@@ -4,21 +4,22 @@ services:
       context: .
       dockerfile: docker/develop/Dockerfile
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
     env_file:
       - .env
     ports:
       - "8080:8080"
-        volumes:
+    volumes:
       - ./:/go/src/polupolu-backend
   postgres:
+    container_name: postgres
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_HOST=${DB_HOST}
       - POSTGRES_DB=${DB_NAME}
-    healthcheck: # here
+    healthcheck:
       interval: 30s
       retries: 6
       start_period: 30s
@@ -42,5 +43,5 @@ services:
     volumes:
       - db-store:/var/lib/postgresql/data
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-    volumes:
+volumes:
   db-store:
