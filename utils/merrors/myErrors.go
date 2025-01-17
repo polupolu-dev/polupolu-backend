@@ -1,4 +1,4 @@
-package myErrors
+package merrors
 
 const (
 	ErrNotFound     = "resource not found"
