@@ -3,25 +3,27 @@ package usecase
 import (
 	"context"
 
+	"github.com/polupolu-dev/polupolu-backend/consts"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
 type NewsUsecase struct {
-	newsRepo interfaces.NewsRepository
+	newsRepo   interfaces.NewsRepository
+	llmService interfaces.LLMService
 }
 
-func NewNewsUsecase(nr interfaces.NewsRepository) *NewsUsecase {
+func NewNewsUsecase(nr interfaces.NewsRepository, ls interfaces.LLMService) *NewsUsecase {
 	return &NewsUsecase{
-		newsRepo: nr,
+		newsRepo:   nr,
+		llmService: ls,
 	}
 }
 
 // ニュース詳細取得 (MVP)
 // 仕様: `news_id` からニュース構造体を取得
-func (uc *NewsUsecase) GetNewsDetail(ctx context.Context, id string) (*models.News, error) {
-	// ewsUseCase) GetNews(ctx context.Context, id string) (*models.News, error) {
-	return uc.newsRepo.GetByID(ctx, id)
+func (uc *NewsUsecase) GetNewsDetail(ctx context.Context, newsID string) (*models.News, error) {
+	return uc.newsRepo.GetByID(ctx, newsID)
 }
 
 // 特定カテゴリのニュース取得 (MVP)
@@ -32,24 +34,32 @@ func (uc *NewsUsecase) GetCategoryNews(ctx context.Context, category string) ([]
 
 // ニュース作成 (MVP)
 // 仕様: ニュース構造体からニュースを作成し，作成したニュース構造体を返す
-func (un *NewsUsecase) CreateNews(ctx context.Context, news *models.News) error {
-	return un.newsRepo.Create(ctx, news)
+func (uc *NewsUsecase) CreateNews(ctx context.Context, news *models.News) error {
+	if news.Summary == "" {
+		summary, err := uc.llmService.GenerateComment(ctx, news.Title, consts.PromptSummary)
+		if err != nil {
+			return err
+		}
+		news.Summary = summary
+	}
+
+	return uc.newsRepo.Create(ctx, news)
 }
 
 // すべてのニュース取得
 // 仕様: すべてのニュース構造体を配列で取得する
-func (un *NewsUsecase) GetAllNews(ctx context.Context) ([]models.News, error) {
-	return un.newsRepo.GetAll(ctx)
+func (uc *NewsUsecase) GetAllNews(ctx context.Context) ([]models.News, error) {
+	return uc.newsRepo.GetAll(ctx)
 }
 
 // ニュースの削除
 // 仕様: `news_id` からニュースを削除する
-func (un *NewsUsecase) DeleteNews(ctx context.Context, id string) error {
-	return un.newsRepo.Delete(ctx, id)
+func (uc *NewsUsecase) DeleteNews(ctx context.Context, id string) error {
+	return uc.newsRepo.Delete(ctx, id)
 }
 
 // ニュースの更新
 // 仕様: ニュース構造体からニュースを更新し，ニュース構造体を返す
-func (un *NewsUsecase) UpdateNews(ctx context.Context, news *models.News) error {
-	return un.newsRepo.Update(ctx, news)
+func (uc *NewsUsecase) UpdateNews(ctx context.Context, news *models.News) error {
+	return uc.newsRepo.Update(ctx, news)
 }
