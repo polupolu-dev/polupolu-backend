@@ -3,7 +3,7 @@ CREATE TABLE comments (
     id UUID PRIMARY KEY,
     reply_to_id UUID NOT NULL,
     replied_ids UUID[],
-    user_id VARCHAR(16) NOT NULL,
+    user_id UUID NOT NULL,
     content VARCHAR(2047) NOT NULL,
     created_at VARCHAR(19) NOT NULL,
     empathy INTEGER NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE news (
 
 -- users テーブルの作成
 CREATE TABLE users (
-    id VARCHAR(16) PRIMARY KEY,
+    id UUID PRIMARY KEY,
     comment_ids UUID[],
     gender VARCHAR(63),
     age_group INTEGER,
