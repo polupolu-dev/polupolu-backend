@@ -47,7 +47,7 @@
   ```bash
   curl -X POST \
     -H "Content-Type: application/json" \
-    -d '{ "id": "new_user", "name": "Jane Doe", "email": "jane.doe@example.com" }' \
+    -d '{ "id": "ca84473f-d3a2-4b36-b418-ddbdb2964c1b" }' \
     http://localhost:8080/api/v1/users
   ```
   - レスポンスヘッダの `Location` で作成されたユーザーの URI を返す
@@ -71,6 +71,13 @@
     curl -X POST \
       -H "Content-Type: application/json" \
       -d '{ "name": "Jane Doe" }' \
+      http://localhost:8080/api/v1/users
+  ```
+  - UUID でない ID
+  ```bash
+    curl -X POST \
+      -H "Content-Type: application/json" \
+      -d '{ "id": "not_uuid", "name": "Jane Doe", "email": "jane.doe@example.com" }' \
       http://localhost:8080/api/v1/users
   ```
 - HTTP/1.1 409 Conflict
