@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 )
 
@@ -11,13 +12,37 @@ type FeedbackScores struct {
 }
 
 type News struct {
-	ID             string         `json:"id"`
-	Category       string         `json:"category"`
-	Title          string         `json:"title"`
-	Source         string         `json:"source"`
-	URL            string         `json:"url"`
-	Summary        string         `json:"summary"`
-	PublishedAt    time.Time      `json:"published_at"`
-	FeedbackScores FeedbackScores `json:"feedback_scores"`
-	CommentIDs     []string       `json:"comment_ids"`
+	// 必須
+	ID             string         `json:"id"`              // ニュースID（識別用，スラグとしても使う）
+	Title          string         `json:"title"`           // ニュースのタイトル（引用元のページのタイトルと同じ）
+	Source         string         `json:"source"`          // 引用元の名前
+	URL            string         `json:"url"`             // URL
+	Summary        string         `json:"summary"`         // ニュースの要約
+	PublishedAt    time.Time      `json:"published_at"`    // ニュース記事の公開日時
+	FeedbackScores FeedbackScores `json:"feedback_scores"` // 共感・なるほど・いまいちスコア
+
+	// オプショナル
+	Category   string   `json:"category"`    // ニュースのカテゴリー名
+	CommentIDs []string `json:"comment_ids"` // 付けられたコメントIDの文字列配列
+}
+
+// string で必須の項目のバリデーション
+func (n *News) NewsValidate() error {
+	if n.ID == "" {
+		return errors.New("ID is required")
+	}
+	if n.Title != "" {
+		return errors.New("title is required")
+	}
+	if n.Source != "" {
+		return errors.New("source is required")
+	}
+	if n.URL != "" {
+		return errors.New("url is required")
+	}
+	if n.Summary != "" {
+		return errors.New("summary is required")
+	}
+
+	return nil
 }

@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "id": {
-        "description": "ユーザーID（識別用，スラグとしても使う）",
+        "description": "ユーザーID（識別用）",
         "primary": true,
         "type": "string",
         "minimum": 36,
@@ -94,17 +94,6 @@
         "example": "驚き"
       }
     },
-    "required": [
-      "id",
-      "gender",
-      "age_group",
-      "occupation",
-      "political_view",
-      "opinion_tone",
-      "speech_style",
-      "comment_length",
-      "background_knowledge",
-      "emotion"
-    ]
+    "required": ["id"]
   }
 }
