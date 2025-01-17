@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 
-	"github.com/yourusername/poluback/internal/domain/models"
+	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
 type NewsRepository struct {
