@@ -48,13 +48,13 @@
 ### 成功
 
 - HTTP/1.1 201 Created
+  - [TODO] レスポンスヘッダの `Location` で作成されたユーザーの URI を返す
   ```bash
   curl -X POST \
     -H "Content-Type: application/json" \
     -d '{ "id": "ca84473f-d3a2-4b36-b418-ddbdb2964c1b", "gender": "男性" }' \
     http://localhost:8080/api/v1/users
   ```
-  - [TODO] レスポンスヘッダの `Location` で作成されたユーザーの URI を返す
   - `Location: /api/v1/users/new_user`
 
 ### 失敗
@@ -84,7 +84,7 @@
   ```
 - HTTP/1.1 409 Conflict
   - 同じユーザー ID でユーザーが既に存在する場合
-  - [TODO] ステータスコードを修正 500 -> 409
+  - [TODO] 適切なステータスコードにする（500 -> 409）
   ```bash
     curl -X POST \
       -H "Content-Type: application/json" \
@@ -117,8 +117,8 @@
   curl -X DELETE http://localhost:8080/api/v1/users/not-exist-user
   ```
 - HTTP/1.1 409 Conflict
-  - [TODO] 未確認
   - リソースがロック中
+  - [TODO] 未確認
   ```bash
   curl -X DELETE http://localhost:8080/api/v1/users/user123
   ```
@@ -130,11 +130,11 @@
 - UpdateUser
 - endpoint: `/api/v1/users/{user_id}`
 - method: `PUT`
+- [TODO] 更新しない値を更新しない
 
 ### 成功
 
 - HTTP/1.1 204 No Content (更新成功)
-  - 未確認
   ```bash
   curl -X PUT \
     -H "Content-Type: application/json" \
@@ -142,30 +142,21 @@
     http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
 - HTTP/1.1 201 Created (新規で作成成功)
-  - 未確認
+  - [TODO] 中途半端な実装なので，廃止にする（エラーにする）
   ```bash
     curl -X PUT \
       -H "Content-Type: application/json" \
-      -d '{ "id": "new_user", "name": "New User", "email": "new@example.com" }' \
-      http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
+      -d '{ "emotion": "驚き", "speech_style": "優しい口調" }' \
+      http://localhost:8080/api/v1/users/066c9108-f5ca-4087-b798-1d96dbd90b23
   ```
   - レスポンスヘッダの `Location` で作成されたユーザーの URI を返す
   - `Location: /api/v1/users/new_user`
-  ```json
-  {
-    "id": "new_user",
-    "name": "New User",
-    "email": "new@example.com",
-    "created_at": "2023-10-27T16:00:00Z",
-    "updated_at": "2023-10-27T16:00:00Z"
-  }
-  ```
 
 ### 失敗
 
 - HTTP/1.1 400 Bad Request
-  - 未確認
   - リクエストボディが不正
+  - [TODO] 不要な値の対応？
   ```bash
     curl -X PUT \
       -H "Content-Type: application/json" \
@@ -173,24 +164,17 @@
       http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
 - HTTP/1.1 404 Not Found
-  - 未確認
   - ID に対応するユーザーが存在しない
+  - [TODO] 適切なステータスコードにする（204 -> 404）
   ```bash
     curl -X PUT \
       -H "Content-Type: application/json" \
       -d '{ "name": "更新" }' \
-      http://localhost:8080/api/v1/users/not-exist-user
+      http://localhost:8080/api/v1/users/3802d7af-2214-4da9-811f-77626d1434f8
   ```
 - HTTP/1.1 409 Conflict
-  - 未確認
-  - リソースが既にある
-  ```bash
-    curl -X PUT \
-      -H "Content-Type: application/json" \
-      -d '{ "name": "更新" }' \
-      http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
-  ```
   - リソースがロック中
+  - [TODO] 未確認
   ```bash
     curl -X PUT \
       -H "Content-Type: application/json" \
@@ -198,5 +182,4 @@
       http://localhost:8080/api/v1/users/ca84473f-d3a2-4b36-b418-ddbdb2964c1b
   ```
 - HTTP/1.1 500 Internal Server Error
-  - 未確認
   - データの更新中にエラー
