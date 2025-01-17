@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	// 必須
-	ID string `json:"id"` // ユーザーID（識別用）
+	ID uuid.UUID `json:"id"` // ユーザーID（識別用）
 
 	// オプショナル
 	CommentIDs          []uuid.UUID `json:"comment_ids"`          // 付けたコメントIDの文字列配列
