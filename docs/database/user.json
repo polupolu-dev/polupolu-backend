@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
       "id": {
-        "description": "ユーザーID（識別用，スラグとしても使う）",
+        "description": "ユーザーID（識別用）",
         "primary": true,
         "type": "string",
         "minimum": 36,
@@ -30,11 +30,11 @@
       "age_group": {
         "description": "ユーザーの年齢層",
         "primary": false,
-        "type": "string",
+        "type": "int",
         "minimum": 2,
         "maximum": 2,
         "example": "20",
-        "comment": "代はフロントで付ける，00は10代未満，90は90代以上, １の位は0"
+        "comment": "代はフロントで付ける，00は10代未満，90は90代以上, １の位は0，32ビット符号なし"
       },
       "occupation": {
         "description": "ユーザーの職業",
@@ -75,7 +75,7 @@
         "minimum": 1,
         "maximum": 4,
         "example": 80,
-        "comment": "2047文字が上限"
+        "comment": "2047文字が上限，32ビット符号なし"
       },
       "background_knowledge": {
         "description": "話題の背景知識",
@@ -94,17 +94,6 @@
         "example": "驚き"
       }
     },
-    "required": [
-      "id",
-      "gender",
-      "age_group",
-      "occupation",
-      "political_view",
-      "opinion_tone",
-      "speech_style",
-      "comment_length",
-      "background_knowledge",
-      "emotion"
-    ]
+    "required": ["id"]
   }
 }

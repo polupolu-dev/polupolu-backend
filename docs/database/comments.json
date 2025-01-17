@@ -11,7 +11,26 @@
         "example": "f81e95ef-0320-4810-be74-39af2571312f",
         "comment": "UUIDで重複しない36文字の文字列（定数）"
       },
-      "replied_id": {
+      "reply_to_id": {
+        "description": "返信先のコメントIDかニュースIDの文字列",
+        "primary": false,
+        "type": "string",
+        "minimum": 36,
+        "maximum": 36,
+        "example": "dd209627-7b7b-412d-b787-793ccd737416"
+      },
+      "replied_ids": {
+        "description": "返信として付けられたコメントIDの文字列配列",
+        "primary": false,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 1023,
+        "example": [
+          "dd209627-7b7b-412d-b787-793ccd737416",
+          "47c3faed-6596-4529-86d4-f1e296349153"
+        ]
+      },
+      "replied_ids": {
         "description": "返信として付けられたコメントIDの文字列配列",
         "primary": false,
         "type": "string",
@@ -32,7 +51,7 @@
         "comment": ".-..-...-...-... 形式，ハイフン以外は半角大文字英数のランダム"
       },
       "content": {
-        "description": "コメントそのもの",
+        "description": "コメント内容",
         "primary": false,
         "type": "string",
         "minimum": 1,
@@ -89,7 +108,7 @@
     },
     "required": [
       "id",
-      "reply_id",
+      "reply_to_id",
       "user_id",
       "content",
       "created_at",
