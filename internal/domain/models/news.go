@@ -3,6 +3,8 @@ package models
 import (
 	"errors"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type FeedbackScores struct {
@@ -13,7 +15,7 @@ type FeedbackScores struct {
 
 type News struct {
 	// 必須
-	ID             string         `json:"id"`              // ニュースID（識別用，スラグとしても使う）
+	ID             uuid.UUID      `json:"id"`              // ニュースID（識別用，スラグとしても使う）
 	Title          string         `json:"title"`           // ニュースのタイトル（引用元のページのタイトルと同じ）
 	Source         string         `json:"source"`          // 引用元の名前
 	URL            string         `json:"url"`             // URL
@@ -28,9 +30,6 @@ type News struct {
 
 // string で必須の項目のバリデーション
 func (n *News) NewsValidate() error {
-	if n.ID == "" {
-		return errors.New("ID is required")
-	}
 	if n.Title != "" {
 		return errors.New("title is required")
 	}
