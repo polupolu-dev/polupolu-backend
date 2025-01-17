@@ -10,17 +10,17 @@ import (
 )
 
 type CommentHandler struct {
-	commentUseCase *usecase.CommentsUsecase
+	commentUseCase *usecase.CommentUsecase
 }
 
-func NewCommentHandler(cu *usecase.CommentsUsecase) *CommentHandler {
+func NewCommentHandler(cu *usecase.CommentUsecase) *CommentHandler {
 	return &CommentHandler{commentUseCase: cu}
 }
 
-func (h *CommentHandler) GetCommentsForNews(w http.ResponseWriter, r *http.Request) {
+func (h *CommentHandler) GetCommentForNews(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	newsID := vars["news_id"]
-	comments, err := h.commentUseCase.GetCommentsForNews(r.Context(), newsID)
+	comments, err := h.commentUseCase.GetCommentForNews(r.Context(), newsID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
