@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"time"
 )
 
@@ -21,12 +20,4 @@ type News struct {
 	PublishedAt    time.Time      `json:"published_at"`
 	FeedbackScores FeedbackScores `json:"feedback_scores"`
 	CommentIDs     []string       `json:"comment_ids"`
-}
-
-func (n *News) NewsValidate() error {
-	if n.ID == "" {
-		return errors.New("ID is required")
-	}
-
-	return nil
 }
