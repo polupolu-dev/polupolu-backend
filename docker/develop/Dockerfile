@@ -14,4 +14,4 @@ RUN go mod download
 
 COPY . .
 
-CMD ["air", "-c", ".air.toml"]
+CMD ["air", "-log.silent", "true", "-c", ".air.toml"]
