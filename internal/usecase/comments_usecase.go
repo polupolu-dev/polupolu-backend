@@ -3,24 +3,23 @@ package usecase
 import (
 	"context"
 
+	"github.com/polupolu-dev/polupolu-backend/consts"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
-)
-
-const (
-	prompt = "ニュースに対するコメントを生成してください"
 )
 
 type CommentsUsecase struct {
 	commentRepo interfaces.CommentRepository
 	newsRepo    interfaces.NewsRepository
+	userRepo    interfaces.UserRepository
 	llmService  interfaces.LLMService
 }
 
-func NewCommentsUsecase(cr interfaces.CommentRepository, nr interfaces.NewsRepository, ls interfaces.LLMService) *CommentsUsecase {
+func NewCommentsUsecase(cr interfaces.CommentRepository, nr interfaces.NewsRepository, ur interfaces.UserRepository, ls interfaces.LLMService) *CommentsUsecase {
 	return &CommentsUsecase{
 		commentRepo: cr,
 		newsRepo:    nr,
+		userRepo:    ur,
 		llmService:  ls,
 	}
 }
@@ -45,31 +44,44 @@ func (uc *CommentsUsecase) GetUserComments(ctx context.Context, userID string) (
 
 // ニュースへのコメント作成 (MVP)
 // 仕様: コメント構造体からコメントを作成し，コメント構造体を返す
-func (uc *CommentsUsecase) CreateComment(ctx context.Context, comment *models.Comment, newsID string) error {
-	if comment.Content != "" {
-		return uc.commentRepo.Create(ctx, comment)
-	}
-
-	// ニュースの取得
-	news, err := uc.newsRepo.GetByID(ctx, newsID)
+func (uc *CommentsUsecase) CreateComment(ctx context.Context, comment *models.Comment) error {
+	// ニュースが存在することを検証
+	news, err := uc.newsRepo.GetByID(ctx, comment.ReplyToID)
 	if err != nil {
 		return err
 	}
 
-	// コメントの生成
-	content, err := uc.llmService.GenerateComment(ctx, news.Summary, prompt)
-	if err != nil {
-		return err
+	// コンテンツが空の場合、LLM を使用してコメントを生成します
+	if comment.Content == "" {
+		content, err := uc.llmService.GenerateComment(ctx, news.Summary, consts.PromptComment)
+		if err != nil {
+			return err
+		}
+		comment.Content = content
 	}
-	comment.Content = content
 
 	return uc.commentRepo.Create(ctx, comment)
 }
 
 // コメントへの返信作成 (MVP)
 // 仕様: コメント構造体からコメントを作成し，コメント構造体を返す
-func (uc *CommentsUsecase) CreateReply(ctx context.Context, comment *models.Comment) error {
-	return uc.commentRepo.Create(ctx, comment)
+func (uc *CommentsUsecase) CreateReply(ctx context.Context, reply *models.Comment) error {
+	// 親コメントが存在することを検証
+	parentComment, err := uc.commentRepo.GetByCommentID(ctx, reply.ReplyToID)
+	if err != nil {
+		return err
+	}
+
+	if reply.Content == "" {
+		content, err := uc.llmService.GenerateComment(
+			ctx, parentComment.Content, consts.PromptComment)
+		if err != nil {
+			return err
+		}
+		reply.Content = content
+	}
+
+	return uc.commentRepo.Create(ctx, reply)
 }
 
 // 削除
