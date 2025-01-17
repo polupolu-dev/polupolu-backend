@@ -28,8 +28,12 @@ func (h *CommentHandler) GetCommentsForNews(w http.ResponseWriter, r *http.Reque
 
 	comments, err := h.commentUseCase.GetCommentsForNews(r.Context(), newsID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
+	}
+
+	if comments == nil {
+		w.WriteHeader(http.StatusNoContent)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -62,14 +66,18 @@ func (h *CommentHandler) GetUserComments(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	user, err := h.commentUseCase.GetUserComments(r.Context(), userID)
+	comment, err := h.commentUseCase.GetUserComments(r.Context(), userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
+	if comment == nil {
+		w.WriteHeader(http.StatusNoContent)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(comment)
 }
 
 func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
