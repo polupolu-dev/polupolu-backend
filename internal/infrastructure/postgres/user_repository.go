@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )
 
@@ -25,10 +26,11 @@ func (r *UserRepository) Get(ctx context.Context, id uuid.UUID) (*models.User, e
 	`
 
 	var user models.User
+	var stringCommentIDs []string
 
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
 		&user.ID,
-		&user.CommentIDs,
+		pq.Array(&stringCommentIDs),
 		&user.Gender,
 		&user.AgeGroup,
 		&user.Occupation,
@@ -43,6 +45,14 @@ func (r *UserRepository) Get(ctx context.Context, id uuid.UUID) (*models.User, e
 		return nil, err
 	}
 
+	user.CommentIDs = make([]uuid.UUID, len(stringCommentIDs))
+	for i, s := range stringCommentIDs {
+		user.CommentIDs[i], err = uuid.Parse(s)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &user, nil
 }
 
@@ -54,9 +64,14 @@ func (r *UserRepository) Create(ctx context.Context, user *models.User) error {
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 	`
 
+	stringCommentIDs := make([]string, len(user.CommentIDs))
+	for i, u := range user.CommentIDs {
+		stringCommentIDs[i] = u.String()
+	}
+
 	_, err := r.db.ExecContext(ctx, query,
 		user.ID,
-		user.CommentIDs,
+		pq.Array(stringCommentIDs),
 		user.Gender,
 		user.AgeGroup,
 		user.Occupation,
@@ -81,9 +96,14 @@ func (r *UserRepository) Update(ctx context.Context, user *models.User) error {
 		WHERE id = $1
 	`
 
+	stringCommentIDs := make([]string, len(user.CommentIDs))
+	for i, u := range user.CommentIDs {
+		stringCommentIDs[i] = u.String()
+	}
+
 	_, err := r.db.ExecContext(ctx, query,
 		user.ID,
-		user.CommentIDs,
+		pq.Array(stringCommentIDs),
 		user.Gender,
 		user.AgeGroup,
 		user.Occupation,
