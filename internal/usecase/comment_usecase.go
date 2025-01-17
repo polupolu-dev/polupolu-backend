@@ -28,6 +28,12 @@ func NewCommentUsecase(cr interfaces.CommentRepository, nr interfaces.NewsReposi
 // ニュースへのコメント一覧取得 (MVP)
 // 仕様: `news_id` からコメント構造体の配列を取得する
 func (uc *CommentUsecase) GetCommentsForNews(ctx context.Context, newsID uuid.UUID) ([]models.Comment, error) {
+	// ニュースが存在することを検証
+	_, err := uc.newsRepo.GetByID(ctx, newsID)
+	if err != nil {
+		return nil, err
+	}
+
 	return uc.commentRepo.GetByID(ctx, newsID)
 }
 
