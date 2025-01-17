@@ -106,6 +106,9 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// ユーザーが存在するか
+	// w.WriteHeader(http.StatusCreated)
+
 	// 更新処理
 	if err := h.userUseCase.UpdateUser(r.Context(), &user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -113,5 +116,5 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Location", "/api/v1/user/"+user.ID.String())
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusNoContent)
 }
