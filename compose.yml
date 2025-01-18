@@ -2,7 +2,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: docker/develop/Dockerfile
+      dockerfile: docker/${MODE}/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
