@@ -20,7 +20,7 @@ jobs:
           docker compose up --build -d
 
       - name: Create dot env file
-      - shell: bash
+        shell: bash
         run: |
           touch .env
           echo "MODE=${{ secrets.MODE }}" >> .env
