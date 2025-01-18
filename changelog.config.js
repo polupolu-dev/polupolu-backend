@@ -22,7 +22,7 @@ module.exports = {
     cicd: {
       description: "🎡CI/CDに関する更新",
       emoji: "🎡",
-      value: "CI/CD",
+      value: "cicd",
     },
     docs: {
       description: "📄ドキュメント更新",
