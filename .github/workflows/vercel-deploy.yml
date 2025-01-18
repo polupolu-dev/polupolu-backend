@@ -1,0 +1,39 @@
+name: backend_ci
+
+# トリガーになる Github イベント
+on:
+  # main に pull request をトリガーに
+  pull_request:
+    branches:
+      - main
+
+# ジョブを定義
+jobs:
+  go_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Docker build
+        run: |
+          docker compose up --build -d
+
+      - name: Create dot env file
+        shell: bash
+        run: |
+          touch .env
+          echo "MODE=${{ secrets.MODE }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "SSLMODE=${{ secrets.SSLMODE }}" >> .env
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}

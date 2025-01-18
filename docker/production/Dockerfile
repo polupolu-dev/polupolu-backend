@@ -10,15 +10,15 @@ COPY go.sum .
 RUN go mod download
 
 COPY . .
-RUN go build -o api cmd/main.go
+RUN go build -o cmd/main cmd/main.go
 
 
 FROM alpine:${ALPINE_VERSION}
 
-WORKDIR /usr/src/polupolu-backend
+WORKDIR /
+COPY --from=go-builder /go/src/polupolu-backend/cmd/main /api
+COPY --from=go-builder /go/src/polupolu-backend/.env /.env
+EXPOSE 8080
+RUN chmod +x "/api"
 
-COPY --from=go-builder /go/src/polupolu-backend/api/v1 api
-COPY --from=go-builder /go/src/polupolu-backend/api/v1 .env
-RUN chmod +x "/usr/src/polupolu-backend/api/v1"
-
-ENTRYPOINT ["/usr/src/polupolu-backend/api/v1"]
+ENTRYPOINT ["/api"]
