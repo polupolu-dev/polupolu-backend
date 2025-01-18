@@ -2,10 +2,10 @@ name: backend_ci
 
 # トリガーになる Github イベント
 on:
-  # main に pull request をトリガーに
+  # develop に pull request をトリガーに
   pull_request:
     branches:
-      - main
+      - develop
 
 # ジョブを定義
 jobs:
