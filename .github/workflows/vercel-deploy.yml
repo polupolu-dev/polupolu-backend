@@ -2,10 +2,10 @@ name: backend_ci
 
 # トリガーになる Github イベント
 on:
-  # main に pull request をトリガーに
+  # develop に pull request をトリガーに
   pull_request:
     branches:
-      - main
+      - develop
 
 # ジョブを定義
 jobs:
@@ -14,10 +14,6 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v3
-
-      - name: Docker build
-        run: |
-          docker compose up --build -d
 
       - name: Create dot env file
         shell: bash
@@ -30,6 +26,10 @@ jobs:
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "SSLMODE=${{ secrets.SSLMODE }}" >> .env
+
+      - name: Docker build
+        run: |
+          docker compose up --build -d
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
