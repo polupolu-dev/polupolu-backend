@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/polupolu-dev/polupolu-backend/internal/infrastructure/postgres"
 	"github.com/polupolu-dev/polupolu-backend/internal/usecase"
 	"github.com/polupolu-dev/polupolu-backend/utils/config"
+	"github.com/polupolu-dev/polupolu-backend/utils/consts"
 )
 
 func main() {
@@ -18,10 +20,20 @@ func main() {
 		log.Fatal(err)
 	}
 
-	switch config.DB_TYPE {
-	case cloudsql:
-	case postgres:
-		dbConn := config.Postgres()
+	var dbConn *sql.DB
+
+	switch config.DBType {
+	case consts.Cloudsql:
+		dbConn, err := config.Cloudsql()
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer dbConn.Close()
+	case consts.Postgres:
+		dbConn, err := config.Postgres()
+		if err != nil {
+			log.Fatal(err)
+		}
 		defer dbConn.Close()
 	}
 

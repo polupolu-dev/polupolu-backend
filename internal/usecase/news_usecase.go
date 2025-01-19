@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/polupolu-dev/polupolu-backend/consts"
+	"github.com/polupolu-dev/polupolu-backend/utils/consts"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
 )

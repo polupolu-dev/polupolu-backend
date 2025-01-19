@@ -2,14 +2,14 @@ package config
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
 )
 
-func Postgres() *sql.DB {
-	dbConn, err := sql.Open("postgres", DB_DSN)
+func Postgres() (*sql.DB, error) {
+	dbConn, err := sql.Open("postgres", DBDSN)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	return dbConn
+	return dbConn, err
 }
