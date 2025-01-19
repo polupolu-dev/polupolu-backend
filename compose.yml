@@ -4,10 +4,14 @@ services:
       context: .
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       dockerfile: docker/${MODE}/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
+=======
+      dockerfile: docker/production/Dockerfile
+>>>>>>> Stashed changes
 =======
       dockerfile: docker/production/Dockerfile
 >>>>>>> Stashed changes
