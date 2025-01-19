@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
@@ -19,11 +18,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	dbConn, err := sql.Open("postgres", config.DB_DSN)
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+	switch config.DB_TYPE {
+	case cloudsql:
+	case postgres:
+		dbConn := config.Postgres()
+		defer dbConn.Close()
 	}
-	defer dbConn.Close()
 
 	commentRepo := postgres.NewCommentRepository(dbConn)
 	newsRepo := postgres.NewNewsRepository(dbConn)
