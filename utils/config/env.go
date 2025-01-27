@@ -5,14 +5,13 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/polupolu-dev/polupolu-backend/utils/consts"
 )
 
 var (
-	dbUser                 string
-	dbPassword             string
-	dbName                 string
-	instabceConnectionName string
-	privateIP              string
+	DBName                 string
+	InstanceConnectionName string
+	PrivateIP              string
 
 	Mode   string
 	DBType string
@@ -25,24 +24,32 @@ func LoadEnv() error {
 		return err
 	}
 
-	dbUser = os.Getenv("DB_USER")
-	dbPassword = os.Getenv("DB_PASSWORD")
-	dbName = os.Getenv("DB_NAME")
-	instabceConnectionName = os.Getenv("INSTANCE_CONNECTION_NAME")
-	privateIP = os.Getenv("PRIVATE_IP")
+	DBName = os.Getenv("DB_NAME")
+	InstanceConnectionName = os.Getenv("INSTANCE_CONNECTION_NAME")
+	PrivateIP = os.Getenv("PRIVATE_IP")
 
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	sslmode := os.Getenv("SSLMODE")
 
 	Mode = os.Getenv("MODE")
 	DBType = os.Getenv("DB_TYPE")
-	DBDSN = "user=" + dbUser +
-		" password=" + dbPassword +
-		" host=" + dbHost +
-		" port=" + dbPort +
-		" dbname=" + dbName +
-		" sslmode=" + sslmode
+
+	switch DBType {
+	case consts.Cloudsql:
+		DBDSN = "user=" + dbUser +
+			" password=" + dbPassword +
+			" database=" + DBName
+	case consts.Postgres:
+		DBDSN = "user=" + dbUser +
+			" password=" + dbPassword +
+			" host=" + dbHost +
+			" port=" + dbPort +
+			" dbname=" + DBName +
+			" sslmode=" + sslmode
+	}
 
 	return nil
 }

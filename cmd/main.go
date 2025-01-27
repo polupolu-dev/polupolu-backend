@@ -24,13 +24,15 @@ func main() {
 
 	switch config.DBType {
 	case consts.Cloudsql:
-		dbConn, err := config.Cloudsql()
+		var err error
+		dbConn, err = config.Cloudsql()
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer dbConn.Close()
 	case consts.Postgres:
-		dbConn, err := config.Postgres()
+		var err error
+		dbConn, err = config.Postgres()
 		if err != nil {
 			log.Fatal(err)
 		}
