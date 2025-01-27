@@ -9,6 +9,7 @@ import (
 	"github.com/polupolu-dev/polupolu-backend/internal/adapter/handlers"
 	"github.com/polupolu-dev/polupolu-backend/internal/adapter/router"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
+	"github.com/polupolu-dev/polupolu-backend/internal/infrastructure/llm"
 	"github.com/polupolu-dev/polupolu-backend/internal/infrastructure/postgres"
 	"github.com/polupolu-dev/polupolu-backend/internal/usecase"
 	"github.com/polupolu-dev/polupolu-backend/utils/config"
@@ -42,9 +43,11 @@ func main() {
 	commentRepo := postgres.NewCommentRepository(dbConn)
 	newsRepo := postgres.NewNewsRepository(dbConn)
 	userRepo := postgres.NewUserRepository(dbConn)
-	var llmService interfaces.LLMService
 
-	commentUC := usecase.NewCommentUsecase(commentRepo, newsRepo, userRepo, llmService)
+	llmService := &llm.NoopLLMService{}
+
+	commentUC := usecase.NewCommentUsecase(
+		commentRepo, newsRepo, userRepo, llmService)
 	newsUC := usecase.NewNewsUsecase(newsRepo, llmService)
 	userUC := usecase.NewUserUsecase(userRepo)
 
