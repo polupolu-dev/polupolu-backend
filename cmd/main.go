@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/polupolu-dev/polupolu-backend/internal/adapter/handlers"
 	"github.com/polupolu-dev/polupolu-backend/internal/adapter/router"
+	"github.com/polupolu-dev/polupolu-backend/internal/infrastructure/llm"
 	"github.com/polupolu-dev/polupolu-backend/internal/infrastructure/postgres"
 	"github.com/polupolu-dev/polupolu-backend/internal/usecase"
 	"github.com/polupolu-dev/polupolu-backend/utils/config"
