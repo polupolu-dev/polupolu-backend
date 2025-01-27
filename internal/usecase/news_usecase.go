@@ -36,7 +36,7 @@ func (uc *NewsUsecase) GetCategoryNews(ctx context.Context, category string) ([]
 // ニュース作成 (MVP)
 // 仕様: ニュース構造体からニュースを作成し，作成したニュース構造体を返す
 func (uc *NewsUsecase) CreateNews(ctx context.Context, news *models.News) error {
-	if news.Summary == "" && uc.llmService != nil {
+	if news.Summary == "" {
 		summary, err := uc.llmService.GenerateComment(
 			ctx, news.Title, consts.PromptSummary)
 		if err != nil {
