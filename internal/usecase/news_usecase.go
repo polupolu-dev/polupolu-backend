@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/polupolu-dev/polupolu-backend/utils/consts"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/interfaces"
 	"github.com/polupolu-dev/polupolu-backend/internal/domain/models"
+	"github.com/polupolu-dev/polupolu-backend/utils/consts"
 )
 
 type NewsUsecase struct {
@@ -36,8 +36,9 @@ func (uc *NewsUsecase) GetCategoryNews(ctx context.Context, category string) ([]
 // ニュース作成 (MVP)
 // 仕様: ニュース構造体からニュースを作成し，作成したニュース構造体を返す
 func (uc *NewsUsecase) CreateNews(ctx context.Context, news *models.News) error {
-	if news.Summary == "" {
-		summary, err := uc.llmService.GenerateComment(ctx, news.Title, consts.PromptSummary)
+	if news.Summary == "" && uc.llmService != nil {
+		summary, err := uc.llmService.GenerateComment(
+			ctx, news.Title, consts.PromptSummary)
 		if err != nil {
 			return err
 		}
