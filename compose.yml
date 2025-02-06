@@ -4,14 +4,23 @@ services:
       context: .
       dockerfile: docker/${MODE}/Dockerfile
     depends_on:
-      postgres:
-        condition: service_healthy
+      sql_proxy:
+        # postgres:
+        # condition: service_healthy
     env_file:
       - .env
     ports:
       - "8080:8080"
     volumes:
       - ./:/go/src/polupolu-backend
+  sql_proxy:
+    image: gcr.io/cloudsql-docker/gce-proxy:latest
+    volumes:
+      - .invertible-env-448206-n2-fc9a63d429f6.json:/config.json
+    ports:
+      - "3306:3306"
+    restart: always
+    command: /cloud_sql_proxy -instances=invertible-env-448206-n2:asia-northeast1:my-polupolu-postgres=tcp:0.0.0.0:3306 -credential_file=/config.json
   postgres:
     container_name: postgres
     environment:
