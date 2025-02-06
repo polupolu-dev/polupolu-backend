@@ -1,0 +1,48 @@
+name: upload docker image and deploy to cloud run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: "sensor-data-dashboard"
+jobs:
+  build-and-publish:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{ secrets.GCLOUD_AUTH }}"
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure docker for artifact registry
+        run: |
+          gcloud auth configure-docker ${{secrets.REGION}}-docker.pkg.dev
+
+      - name: Build
+        run: |
+          docker build -t ${{env.IMAGE_NAME}}:${{ github.sha }} .
+      - name: tag
+        run: |
+          docker tag ${{env.IMAGE_NAME}}:${{ github.sha }} ${{secrets.REGION}}-docker.pkg.dev/${{secrets.PROJECT}}/${{secrets.REPOSITORY}}/${{env.IMAGE_NAME}}:${{ github.sha }}
+      - name: Push
+        run: |
+          docker push ${{secrets.REGION}}-docker.pkg.dev/${{secrets.PROJECT}}/${{secrets.REPOSITORY}}/${{env.IMAGE_NAME}}:${{ github.sha }}
+      - uses: "google-github-actions/deploy-cloudrun@v2"
+        with:
+          image: ${{secrets.REGION}}-docker.pkg.dev/${{secrets.PROJECT}}/${{secrets.REPOSITORY}}/${{env.IMAGE_NAME}}:${{ github.sha }}
+          service: ${{env.IMAGE_NAME}}
+          region: ${{secrets.REGION}}
+          env_vars: |
+            PORT=8080
